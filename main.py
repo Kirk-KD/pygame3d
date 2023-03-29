@@ -13,8 +13,8 @@ WIN = pg.display.set_mode(WIN_RES)
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 
-cam = Camera(Point3D(0, 0, 0), RotationXY(0, radians(20)))
-p = Plane([Point3D(-1, 1, 2), Point3D(1, 1, 4), Point3D(1, -1, 4), Point3D(-1, -1, 2)], cam)
+cam = Camera(Point3D(0, 0, 0), RotationXY(0, 0))
+p = Plane([Point3D(-1, 1, 2), Point3D(1, 1, 2), Point3D(1, -1, 2), Point3D(-1, -1, 2)], cam)
 
 running = True
 while running:
