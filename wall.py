@@ -51,12 +51,11 @@ class Plane:
 
         left_height = abs(vertices_proj[0][1] - vertices_proj[1][1])
         right_height = abs(vertices_proj[2][1] - vertices_proj[3][1])
-        min_height = min(left_height, right_height)
         height_diff_per_x_pixel = (right_height - left_height) / (max_x - min_x)
         
         x = min_x - 1
         y = left_y
-        height = min_height
+        height = left_height
 
         if x < -WIN_HALF:
             missing_x = -WIN_HALF - x
@@ -65,8 +64,11 @@ class Plane:
             height += height_diff_per_x_pixel * missing_x
         
         if max_x > WIN_HALF:
-            max_x = WIN_HALF
+            max_x = WIN_HALF - 1
 
+        # print(vertices_proj)
+
+        line_no = 0
         while x < max_x:
             x += 1
             y += y_diff_per_x_pixel
@@ -74,5 +76,13 @@ class Plane:
 
             line_start = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - y, 0, WIN_HEIGHT)
             line_end = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - (y + height), 0, WIN_HEIGHT)
-            pg.draw.line(surface, (255, 255, 255), line_start, line_end)
+
+            if line_no == 0:
+                color = 255, 0, 0
+            else:
+                color = 255, 255, 255
+            pg.draw.line(surface, color, line_start, line_end)
+
+            line_no += 1
+        # pg.draw.line(surface, (0, 255, 0), line_start, line_end)
 

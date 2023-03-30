@@ -23,9 +23,16 @@ while running:
             running = False
             break
     
+    keys = pg.key.get_pressed()
+    if keys[pg.K_LEFT]:
+        cam.orientation.rotateY(radians(0.1))
+    elif keys[pg.K_RIGHT]:
+        cam.orientation.rotateY(radians(-0.1))
+
+    print(cam.orientation)
+    
     WIN.fill(BLACK)
 
     p.draw(WIN)
-    cam.orientation.y += 0.001
 
     pg.display.update()

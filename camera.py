@@ -9,7 +9,8 @@ class Camera:
     def __init__(self, position: Point3D, orientation: RotationXY):
         self.position = position
         self.orientation = orientation
-        self.projection_plane_distance = 0.5 * (WIN_WIDTH / math.tan(FOV / 2))
+        # self.projection_plane_distance = 0.5 * (WIN_WIDTH / math.tan(FOV / 2))
+        self.projection_plane_distance = WIN_WIDTH / (2 * math.tan(FOV / 2))
     
     def get_camera_matrix(self):
         # Compute the rotation matrix for the camera orientation

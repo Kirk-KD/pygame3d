@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 
 class Point3D:
@@ -10,11 +11,27 @@ class Point3D:
     def to_tuple(self):
         return self.x, self.y, self.z
 
+    def __str__(self):
+        return f"Point3D(x={self.x}, y={self.y}, z={self.z})"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class RotationXY:
+    """XY rotation, in radians."""
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
+    
+    def rotateY(self, v):
+        self.y += v
+        if self.y >= math.pi:
+            self.y = -math.pi
+    
+    def __str__(self):
+        return f"RotationXY(x={self.x}, y={self.y})"
 
 
 def transform_vertex(vertex, transform_matrix):
@@ -27,4 +44,9 @@ def project_vertex(vertex, projection_plane_distance):
     x, y, z = vertex
     x_proj = x * projection_plane_distance / z
     y_proj = y * projection_plane_distance / z
+    x_sign = np.sign(x)
+    y_sign = np.sign(y)
+    z_sign = np.sign(z)
+    x_proj = x_sign * np.abs(x_proj)
+    y_proj = y_sign * np.abs(y_proj)
     return np.array([x_proj, y_proj])
