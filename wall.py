@@ -1,7 +1,7 @@
 import pygame as pg
 
 from camera import Camera
-from geometry import Point3D, transform_vertex, project_vertex
+from geometry import Point3D, transform_vertex, project_vertex, limit_projection
 from constants import *
 from util import clamp
 
@@ -39,9 +39,17 @@ class Plane:
     def draw(self, surface: pg.Surface):
         camera_matrix = self.camera.get_camera_matrix()
         vertices_cam = [transform_vertex(vertex.to_tuple(), camera_matrix) for vertex in self.vertices]
-        vertices_proj = [project_vertex(vertex_cam, self.camera.projection_plane_distance) for vertex_cam in vertices_cam]
+        vertices_proj_1 = [project_vertex(vertex_cam, self.camera.projection_plane_distance) for vertex_cam in vertices_cam]
+        vertices_proj = [
+            limit_projection(vertices_proj_1[0], vertices_proj_1[1]),
+            limit_projection(vertices_proj_1[1], vertices_proj_1[0]),
+            limit_projection(vertices_proj_1[2], vertices_proj_1[3]),
+            limit_projection(vertices_proj_1[3], vertices_proj_1[2])
+        ]
 
         vertices_proj.sort(key=lambda v: v[0])
+
+        # print(vertices_proj)
 
         min_x = min(vertices_proj[0][0], vertices_proj[1][0])
         max_x = max(vertices_proj[2][0], vertices_proj[3][0])
@@ -62,11 +70,9 @@ class Plane:
             x = -WIN_HALF
             y += y_diff_per_x_pixel * missing_x
             height += height_diff_per_x_pixel * missing_x
-        
+
         if max_x > WIN_HALF:
             max_x = WIN_HALF - 1
-
-        # print(vertices_proj)
 
         line_no = 0
         while x < max_x:
@@ -84,5 +90,4 @@ class Plane:
             pg.draw.line(surface, color, line_start, line_end)
 
             line_no += 1
-        # pg.draw.line(surface, (0, 255, 0), line_start, line_end)
 

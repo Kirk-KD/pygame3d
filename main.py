@@ -9,6 +9,7 @@ from math import radians
 pg.init()
 
 WIN = pg.display.set_mode(WIN_RES)
+CLOCK = pg.time.Clock()
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
@@ -25,14 +26,15 @@ while running:
     
     keys = pg.key.get_pressed()
     if keys[pg.K_LEFT]:
-        cam.orientation.rotateY(radians(0.1))
+        cam.orientation.rotateY(radians(0.5))
     elif keys[pg.K_RIGHT]:
-        cam.orientation.rotateY(radians(-0.1))
-
-    print(cam.orientation)
+        cam.orientation.rotateY(radians(-0.5))
+    elif keys[pg.K_SPACE]:
+        cam.orientation.set_zeros()
     
     WIN.fill(BLACK)
 
     p.draw(WIN)
 
     pg.display.update()
+    CLOCK.tick(FPS)
