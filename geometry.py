@@ -1,8 +1,6 @@
 import numpy as np
 import math
 
-from constants import WIN_WIDTH, WIN_HEIGHT
-
 
 class Point3D:
     def __init__(self, x, y, z):
@@ -49,42 +47,9 @@ def transform_vertex(vertex, transform_matrix):
 
 def project_vertex(vertex, projection_plane_distance):
     x, y, z = vertex
+    if z <= 0:
+        z = 0.001
     x_proj = x * projection_plane_distance / z
-    print(f"x_proj = {x} * {projection_plane_distance} / {z} = {x_proj}")
+    # print(f"x_proj = {x} * {projection_plane_distance} / {z} = {x_proj}")
     y_proj = y * projection_plane_distance / z
     return np.array([x_proj, y_proj])
-
-# def project_vertex(vertex, projection_plane_distance):
-#     x, y, z = vertex
-#     if z <= 0:
-#         # If the vertex is behind the camera, project it on the edge of the screen
-#         x_proj = x * projection_plane_distance / max(0.0001, -z)
-#         y_proj = y * projection_plane_distance / max(0.0001, -z)
-#         # Clamp x_proj and y_proj to the screen edges
-#         x_proj = min(max(x_proj, -WIN_WIDTH / 2), WIN_WIDTH / 2)
-#         y_proj = min(max(y_proj, -WIN_HEIGHT / 2), WIN_HEIGHT / 2)
-#     else:
-#         # If the vertex is in front of the camera, project it normally
-#         x_proj = x * projection_plane_distance / z
-#         y_proj = y * projection_plane_distance / z
-
-    # return np.array([x_proj, y_proj])
-
-
-def limit_projection(target, reference):
-    x1, y1 = target
-    x2, y2 = reference
-
-    m = (y1 - y2) / (x1 - x2)
-    b = y1 - m * x1
-
-    if x1 <= -WIN_WIDTH:
-        new_x = -WIN_WIDTH
-        new_y = m * (-WIN_WIDTH ) + b
-    elif x1 >= WIN_WIDTH:
-        new_x = WIN_WIDTH
-        new_y = m * WIN_WIDTH + b
-    else:
-        return x1, y1
-
-    return new_x, new_y
