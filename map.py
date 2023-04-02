@@ -120,11 +120,6 @@ class Map:
             )
         
         for col in range(self.width):
-            print(VerticalWall(
-                    Point3D(col * WALL_SIZE, WALL_SIZE, self.height * WALL_SIZE),
-                    Point3D((col + 1) * WALL_SIZE, 0, self.height * WALL_SIZE),
-                    self.camera, WALL_COLOR
-                ))
             walls.add(
                 VerticalWall(
                     Point3D(col * WALL_SIZE, WALL_SIZE, self.height * WALL_SIZE),
