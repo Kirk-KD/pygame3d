@@ -1,6 +1,8 @@
 import numpy as np
 import math
 
+from util import clamp
+
 
 class Point3D:
     def __init__(self, x, y, z):
@@ -10,6 +12,9 @@ class Point3D:
     
     def to_tuple(self):
         return self.x, self.y, self.z
+
+    def copy(self):
+        return Point3D(self.x, self.y, self.z)
 
     def __str__(self):
         return f"Point3D(x={self.x}, y={self.y}, z={self.z})"
@@ -45,11 +50,11 @@ def transform_vertex(vertex, transform_matrix):
     vertex_transformed = np.dot(transform_matrix, vertex_homog)
     return vertex_transformed[:3]
 
+
 def project_vertex(vertex, projection_plane_distance):
     x, y, z = vertex
     if z <= 0:
         z = 0.001
     x_proj = x * projection_plane_distance / z
-    # print(f"x_proj = {x} * {projection_plane_distance} / {z} = {x_proj}")
     y_proj = y * projection_plane_distance / z
     return np.array([x_proj, y_proj])

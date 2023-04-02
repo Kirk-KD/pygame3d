@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 from geometry import Point3D, RotationXY
-from constants import FOV, WIN_WIDTH
+from constants import FOV, WIN_WIDTH, PLAYER_COLLIDER_RADIUS
 
 
 class Camera:
@@ -10,20 +10,55 @@ class Camera:
         self.position = position
         self.orientation = orientation
         self.projection_plane_distance = WIN_WIDTH / (2 * math.tan(FOV / 2))
+        self.walls = None
+
+        self.next_position = None
     
-    def moveX(self, v: float):
-        # Move the camera's position relative to its orientation
+    def pre_move_x(self, v: float):
+        if not self.next_position:
+            self.next_position = self.position.copy()
+
         dx = v * math.cos(self.orientation.y)
         dz = v * math.sin(self.orientation.y)
-        self.position.x += dx
-        self.position.z += dz
+        self.next_position.x += dx
+        self.next_position.z += dz
 
-    def moveZ(self, v: float):
-        # Move the camera's position relative to its orientation
+    def pre_move_z(self, v: float):
+        if not self.next_position:
+            self.next_position = self.position.copy()
+
         dx = v * math.sin(self.orientation.y)
         dz = v * math.cos(self.orientation.y)
-        self.position.x -= dx
-        self.position.z += dz
+        self.next_position.x -= dx
+        self.next_position.z += dz
+    
+    def pre_colision(self):
+        if not self.next_position:
+            return False
+
+        for wall in self.walls:
+            length = math.sqrt((wall.bottom_left.x - wall.bottom_right.x) ** 2 + (wall.bottom_left.z - wall.bottom_right.z) ** 2)
+            dot_product = (self.next_position.x - wall.bottom_left.x) * (wall.bottom_right.x - wall.bottom_left.x) + (self.next_position.z - wall.bottom_left.z) * (wall.bottom_right.z - wall.bottom_left.z)
+
+            if dot_product < 0 or dot_product > length ** 2:
+                continue
+            
+            projection = dot_product / length ** 2
+            closest_x = wall.bottom_left.x + projection * (wall.bottom_right.x - wall.bottom_left.x)
+            closest_z = wall.bottom_left.z + projection * (wall.bottom_right.z - wall.bottom_left.z)
+            distance = math.sqrt(((self.next_position.x - closest_x) ** 2 + (self.next_position.z - closest_z) ** 2))
+
+            if distance <= PLAYER_COLLIDER_RADIUS:
+                return True
+        
+        return False
+
+    def move(self):
+        if (not self.next_position) or self.pre_colision():
+            self.next_position = None
+            return
+        
+        self.position = self.next_position.copy()
     
     def get_camera_matrix(self):
         # Compute the rotation matrix for the camera orientation
