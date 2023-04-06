@@ -96,16 +96,20 @@ class Game:
     def __poll_events(self):
         """Check for pygame events."""
 
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
+        for event in pg.event.get():  # go through all events
+            if event.type == pg.QUIT:  # quit when player wants to quit
                 self.running = False
                 return
             
-            if event.type == pg.MOUSEMOTION:
-                self.camera.orientation.rotateY(radians(-MOUSE_SENSITIVITY * event.rel[0]))
+            if event.type == pg.MOUSEMOTION:  # capture mouse movement
+                self.camera.orientation.rotateY(radians(-MOUSE_SENSITIVITY * event.rel[0]))  # rotate camera based on mouse movement
     
     def __keyboard_input(self):
-        keys = pg.key.get_pressed()
+        """Check for keyboard input."""
+
+        keys = pg.key.get_pressed()  # get the dictionary of the status of all keys
+
+        # movement based on WASD keys
         if keys[pg.K_w]:
             self.camera.pre_move_z(MOVE_SPEED * self.dt)
         if keys[pg.K_s]:
@@ -114,31 +118,41 @@ class Game:
             self.camera.pre_move_x(-MOVE_SPEED * self.dt)
         if keys[pg.K_d]:
             self.camera.pre_move_x(MOVE_SPEED * self.dt)
-        if keys[pg.K_SPACE]:
+        if keys[pg.K_SPACE]:  # reset camera rotation for debug purposes
             self.camera.orientation.set_zeros()
-        if keys[pg.K_ESCAPE]:
+        if keys[pg.K_ESCAPE]:  # unlock the cursor
             pg.event.set_grab(False)
             pg.mouse.set_visible(True)
     
     def __draw_walls(self):
-        lines_to_draw = set()
-        for wall in self.walls:
-            lines_to_draw.update(wall.lines_to_draw())
+        """Draw the walls."""
+
+        lines_to_draw = set()  # initialize a set to store the vertical lines from the walls
+        for wall in self.walls:  # loop through all the walls
+            lines_to_draw.update(wall.lines_to_draw())  # add the lines to draw to the set
         
         # columns = [None] * (WIN_WIDTH + 1)
+
+        # sort the lines from farthest away from the camera to the closest
         for line in sorted(lines_to_draw, key=lambda l: l.dist_to_cam, reverse=True):
-            if line.dist_to_cam > FOG_START:
+            if line.dist_to_cam > FOG_START:  # skip the lines that are in the "fog", or the render distance
                 continue
 
             # columns[int(line.line_start[0])] = line.draw(WIN, columns[int(line.line_start[0])])
+
+            # draw the line
             line.draw(self.surface)
     
     def __draw_sky(self):
+        """Draw the sky (background color)."""
+
         self.surface.fill(SKY_COLOR)
     
     def __draw_floor(self):
-        for y in range(WIN_HALF):
-            r = clamp((1 - (WIN_HALF - y) / WIN_HALF), 0, 1)
-            cr, cg, cb = FLOOR_COLOR
-            color = int(cr * r), int(cg * r), int(cb * r)
-            pg.draw.line(self.surface, color, (0, WIN_HALF + y), (WIN_WIDTH, WIN_HALF + y))
+        """Draw the floor by gradiant colors."""
+
+        for y in range(WIN_HALF):  # start from the mid point of the window
+            r = clamp((1 - (WIN_HALF - y) / WIN_HALF), 0, 1)  # get the percentage of the gradiant
+            cr, cg, cb = FLOOR_COLOR  # unpack the color
+            color = int(cr * r), int(cg * r), int(cb * r)  # add black to the gradiant
+            pg.draw.line(self.surface, color, (0, WIN_HALF + y), (WIN_WIDTH, WIN_HALF + y))  # draw a horizontal line
