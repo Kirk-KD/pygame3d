@@ -5,20 +5,27 @@ from camera import Camera
 from geometry import Point3D, transform_vertex, project_vertex
 from constants import *
 from util import clamp, distance
+from textures import WALL_STRIPS
 
 
 class VerticalLine:
-    def __init__(self, line_start: tuple, line_end: tuple, color: tuple, dist_to_cam: float):
+    def __init__(self, line_start: tuple, line_end: tuple, color: tuple, dist_to_cam: float, strip_idx: int):
         self.line_start = line_start
         self.line_end = line_end
         self.dist_to_cam = dist_to_cam
+        try:
+            self.texture = WALL_STRIPS[strip_idx]
+        except:
+            print(strip_idx, len(WALL_STRIPS))
+            raise KeyError
 
         r = 1 - clamp(dist_to_cam / FOG_START, 0, 1)
         cr, cg, cb = color
         self.color = int(cr * r), int(cg * r), int(cb * r)
     
     def draw(self, surf: pg.Surface):
-        pg.draw.line(surf, self.color, self.line_start, self.line_end)
+        # pg.draw.line(surf, self.color, self.line_start, self.line_end)
+        surf.blit(self.texture, self.line_start)
     
     # def draw2(self, surf: pg.Surface, skip_over_y = None):
     #     if skip_over_y is None:
@@ -107,7 +114,7 @@ class Plane:
 
             line_start = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - y, 0, WIN_HEIGHT)
             line_end = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - (y + height), 0, WIN_HEIGHT)
-            lines.add(VerticalLine(line_start, line_end, self.color, z))
+            lines.add(VerticalLine(line_start, line_end, self.color, z, int(x - min_x) - 1))
         
         return lines
     
