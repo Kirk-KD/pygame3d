@@ -5,7 +5,7 @@ from camera import Camera
 from geometry import Point3D, transform_vertex, project_vertex
 from constants import *
 from util import clamp, distance
-from textures import WALL_STRIPS
+from textures import WALL_STRIPS, WALL_WIDTH_PIXELS
 
 
 class VerticalLine:
@@ -14,10 +14,9 @@ class VerticalLine:
         self.line_end = line_end
         self.dist_to_cam = dist_to_cam
         try:
-            self.texture = WALL_STRIPS[strip_idx]
+            self.texture = pg.transform.scale(WALL_STRIPS[strip_idx], (1, int(abs(self.line_end[1] - self.line_start[1]))))
         except:
-            print(strip_idx, len(WALL_STRIPS))
-            raise KeyError
+            self.texture = None
 
         r = 1 - clamp(dist_to_cam / FOG_START, 0, 1)
         cr, cg, cb = color
@@ -25,7 +24,8 @@ class VerticalLine:
     
     def draw(self, surf: pg.Surface):
         # pg.draw.line(surf, self.color, self.line_start, self.line_end)
-        surf.blit(self.texture, self.line_start)
+        if self.texture:
+            surf.blit(self.texture, self.line_end)
     
     # def draw2(self, surf: pg.Surface, skip_over_y = None):
     #     if skip_over_y is None:
@@ -98,10 +98,13 @@ class Plane:
             y += y_diff_per_x_pixel * missing_x
             height += height_diff_per_x_pixel * missing_x
 
-        if max_x > WIN_HALF:
-            max_x = WIN_HALF - 1
+        max_x_fixed = max_x
+        if max_x_fixed > WIN_HALF:
+            max_x_fixed = WIN_HALF - 1
+        
+        # print(min_x + WIN_HALF, max_x + WIN_HALF)
 
-        while x < max_x:
+        while x < max_x_fixed:
             x += 1
             y += y_diff_per_x_pixel
             z += z_diff_per_x_pixel
@@ -112,9 +115,20 @@ class Plane:
             if z_diff_per_x_pixel < 0 and z > FOG_START:
                 continue
 
-            line_start = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - y, 0, WIN_HEIGHT)
-            line_end = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - (y + height), 0, WIN_HEIGHT)
-            lines.add(VerticalLine(line_start, line_end, self.color, z, int(x - min_x) - 1))
+            # line_start = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - y, 0, WIN_HEIGHT)
+            # line_end = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - (y + height), 0, WIN_HEIGHT)
+
+            line_start = clamp(WIN_HALF + x, 0, WIN_WIDTH), WIN_HALF - y
+            line_end = clamp(WIN_HALF + x, 0, WIN_WIDTH), WIN_HALF - (y + height)
+
+            # line_start = WIN_HALF + x, WIN_HALF - y
+            # line_end = WIN_HALF + x, WIN_HALF - (y + height)
+
+            # if not 0 <= line_start[0] <= WIN_WIDTH:
+            #     continue
+
+            pixel_idx = int(x - min_x) - 1
+            lines.add(VerticalLine(line_start, line_end, self.color, z, int(pixel_idx * (WALL_WIDTH_PIXELS - 1) // (max_x - min_x))))
         
         return lines
     

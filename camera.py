@@ -3,6 +3,7 @@ import math
 
 from geometry import Point3D, RotationXY
 from constants import FOV, WIN_WIDTH, PLAYER_COLLIDER_RADIUS
+from util import distance
 
 
 class Camera:

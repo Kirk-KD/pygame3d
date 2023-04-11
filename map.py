@@ -182,7 +182,7 @@ class Map:
             )
         
         # finally return the created list of walls
-        return walls
+        return list(walls)  # TEMP
 
     def __str__(self):
         """

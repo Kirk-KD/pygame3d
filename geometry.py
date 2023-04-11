@@ -1,5 +1,7 @@
 import numpy as np  # import numpy for advanced math
-import math  # math for basic math
+import math
+
+from constants import WIN_HALF  # math for basic math
 
 
 class Point3D:
@@ -81,6 +83,11 @@ def project_vertex(vertex, projection_plane_distance):
     # just math for calculating the projection
     x_proj = x * projection_plane_distance / z
     y_proj = y * projection_plane_distance / z
+
+    print(x_proj)
+
+    if x_proj > WIN_HALF:
+        x_proj = WIN_HALF + (x_proj - WIN_HALF) * 0.1
 
     # return a numpy array of the x and y pixel position
     return np.array([x_proj, y_proj])
