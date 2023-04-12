@@ -72,6 +72,7 @@ class Plane:
         if not any([z > 0 for x, y, z in vertices_cam]):
             return set()
         vertices_proj = [np.append(project_vertex(vertex_cam, self.camera.projection_plane_distance), vertex_cam[2]) for vertex_cam in vertices_cam]
+        # vertices_proj = [np.append(project_vertex(vertex_cam, self.camera.projection_plane_distance(self.vertices[i])), vertex_cam[2]) for i, vertex_cam in enumerate(vertices_cam)]
         vertices_proj.sort(key=lambda v: v[0])
 
         min_x = min(vertices_proj[0][0], vertices_proj[1][0])
@@ -80,6 +81,10 @@ class Plane:
         right_y = min(vertices_proj[2][1], vertices_proj[3][1])
         left_z = vertices_proj[0][2]
         right_z = vertices_proj[3][2]
+        
+        min_z = min(left_z, right_z)
+        max_z = max(left_z, right_z)
+        print(left_z, right_z)
         y_diff_per_x_pixel = (right_y - left_y) / (max_x - min_x)
         z_diff_per_x_pixel = (right_z - left_z) / (max_x - min_x)
 
@@ -115,18 +120,14 @@ class Plane:
             if z_diff_per_x_pixel < 0 and z > FOG_START:
                 continue
 
-            # line_start = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - y, 0, WIN_HEIGHT)
-            # line_end = clamp(WIN_HALF + x, 0, WIN_WIDTH), clamp(WIN_HALF - (y + height), 0, WIN_HEIGHT)
-
             line_start = clamp(WIN_HALF + x, 0, WIN_WIDTH), WIN_HALF - y
             line_end = clamp(WIN_HALF + x, 0, WIN_WIDTH), WIN_HALF - (y + height)
 
-            # line_start = WIN_HALF + x, WIN_HALF - y
-            # line_end = WIN_HALF + x, WIN_HALF - (y + height)
-
-            # if not 0 <= line_start[0] <= WIN_WIDTH:
-            #     continue
-
+            # pixel_idx = int(x - min_x) - 1
+            # d = math.sqrt(x ** 2 + z ** 2)
+            # max_d = math.sqrt(max_x**2 + z**2)
+            # scaled_distance = d / max_d
+            # slice_idx = int(scaled_distance * (WALL_WIDTH_PIXELS - 1))
             pixel_idx = int(x - min_x) - 1
             lines.add(VerticalLine(line_start, line_end, self.color, z, int(pixel_idx * (WALL_WIDTH_PIXELS - 1) // (max_x - min_x))))
         

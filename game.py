@@ -51,8 +51,8 @@ class Game:
         self.map = Map(self.map_width, self.map_height, 0, 0, self.map_holes, self.camera)
 
         # get the walls from the map
-        self.walls = [self.map.to_walls()[0]]
         # self.walls = self.map.to_walls()
+        self.walls = [self.map.debug_wall()]
 
         # pass the walls to the camera
         self.camera.walls = self.walls

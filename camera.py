@@ -14,6 +14,11 @@ class Camera:
         self.walls = None
 
         self.next_position = None
+
+    # def projection_plane_distance(self, p: Point3D):
+    #     d = distance(self.position, p)
+    #     projection_plane_distance = WIN_WIDTH / (2 * np.tan(FOV / 2)) * (d / self.position.x)
+    #     return projection_plane_distance
     
     def pre_move_x(self, v: float):
         if not self.next_position:

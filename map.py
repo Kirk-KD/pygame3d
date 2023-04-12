@@ -184,6 +184,13 @@ class Map:
         # finally return the created list of walls
         return list(walls)  # TEMP
 
+    def debug_wall(self):
+        return VerticalWall(
+            Point3D(0, WALL_SIZE, WALL_SIZE),
+            Point3D(WALL_SIZE, 0, WALL_SIZE),
+            self.camera, WALL_COLOR
+        )
+
     def __str__(self):
         """
         Function that returns a string display of the map when this object is passed to the str() function.
