@@ -72,7 +72,7 @@ class Plane:
         if not any([z > 0 for x, y, z in vertices_cam]):
             return set()
         vertices_proj = [np.append(project_vertex(vertex_cam, self.camera.projection_plane_distance), vertex_cam[2]) for vertex_cam in vertices_cam]
-        # vertices_proj = [np.append(project_vertex(vertex_cam, self.camera.projection_plane_distance(self.vertices[i])), vertex_cam[2]) for i, vertex_cam in enumerate(vertices_cam)]
+        # vertices_proj = [np.append(project_vertex(vertex_cam, abs(self.camera.position.z - self.vertices[i].z), self.camera), vertex_cam[2]) for i, vertex_cam in enumerate(vertices_cam)]
         vertices_proj.sort(key=lambda v: v[0])
 
         min_x = min(vertices_proj[0][0], vertices_proj[1][0])
@@ -82,13 +82,11 @@ class Plane:
         left_z = vertices_proj[0][2]
         right_z = vertices_proj[3][2]
 
-        negative_z_offset = min(left_z, right_z)
-        negative_z_offset = -negative_z_offset if negative_z_offset < 0 else 0
-        left_z_fixed = left_z + negative_z_offset
-        right_z_fixed = right_z + negative_z_offset
+        # negative_z_offset = min(left_z, right_z)
+        # negative_z_offset = -negative_z_offset if negative_z_offset < 0 else 0
+        # left_z_fixed = left_z + negative_z_offset
+        # right_z_fixed = right_z + negative_z_offset
 
-        print(left_z_fixed, right_z_fixed)
-        
         y_diff_per_x_pixel = (right_y - left_y) / (max_x - min_x)
         z_diff_per_x_pixel = (right_z - left_z) / (max_x - min_x)
 
@@ -127,11 +125,6 @@ class Plane:
             line_start = clamp(WIN_HALF + x, 0, WIN_WIDTH), WIN_HALF - y
             line_end = clamp(WIN_HALF + x, 0, WIN_WIDTH), WIN_HALF - (y + height)
 
-            # pixel_idx = int(x - min_x) - 1
-            # d = math.sqrt(x ** 2 + z ** 2)
-            # max_d = math.sqrt(max_x**2 + z**2)
-            # scaled_distance = d / max_d
-            # slice_idx = int(scaled_distance * (WALL_WIDTH_PIXELS - 1))
             pixel_idx = int(x - min_x) - 1
             lines.add(VerticalLine(line_start, line_end, self.color, z, int(pixel_idx * (WALL_WIDTH_PIXELS - 1) // (max_x - min_x))))
         

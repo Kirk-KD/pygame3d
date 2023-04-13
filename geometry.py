@@ -1,6 +1,8 @@
 import numpy as np  # import numpy for advanced math
 import math
 
+from constants import WIN_HEIGHT, WIN_WIDTH
+
 
 class Point3D:
     """
@@ -70,6 +72,7 @@ def transform_vertex(vertex, transform_matrix):
     vertex_transformed = np.dot(transform_matrix, vertex_homog)
     return vertex_transformed[:3]  # x, y, z
 
+# TODO https://stackoverflow.com/questions/724219/how-to-convert-a-3d-point-into-2d-perspective-projection
 
 def project_vertex(vertex, projection_plane_distance):
     """Project the vertex from world space to camera space, using the distance to the projection plane."""

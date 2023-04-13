@@ -3,6 +3,7 @@ import math
 WIN_HALF = 400
 WIN_WIDTH, WIN_HEIGHT = WIN_RES = WIN_HALF * 2, WIN_HALF * 2
 FOV = math.radians(90)
+# FOV = 1 / math.tan(150 / 2)
 FPS = 110
 
 MOVE_SPEED = 3  # multiply this with deltatime
