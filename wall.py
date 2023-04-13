@@ -81,10 +81,14 @@ class Plane:
         right_y = min(vertices_proj[2][1], vertices_proj[3][1])
         left_z = vertices_proj[0][2]
         right_z = vertices_proj[3][2]
+
+        negative_z_offset = min(left_z, right_z)
+        negative_z_offset = -negative_z_offset if negative_z_offset < 0 else 0
+        left_z_fixed = left_z + negative_z_offset
+        right_z_fixed = right_z + negative_z_offset
+
+        print(left_z_fixed, right_z_fixed)
         
-        min_z = min(left_z, right_z)
-        max_z = max(left_z, right_z)
-        print(left_z, right_z)
         y_diff_per_x_pixel = (right_y - left_y) / (max_x - min_x)
         z_diff_per_x_pixel = (right_z - left_z) / (max_x - min_x)
 
