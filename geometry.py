@@ -1,7 +1,8 @@
 import numpy as np  # import numpy for advanced math
 import math
 
-from constants import WIN_HEIGHT, WIN_WIDTH
+from constants import *
+from util import matrix_multiplication
 
 
 class Point3D:
@@ -63,7 +64,6 @@ class RotationXY:
         """String representation."""
 
         return f"RotationXY(x={self.x}, y={self.y})"
-
 
 def transform_vertex(vertex, transform_matrix):
     """Transform the vertex (x, y, z) using np.concatenate and dot."""
