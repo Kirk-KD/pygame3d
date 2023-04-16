@@ -5,7 +5,8 @@ from renderer.raycasting import Raycasting
 from player import Player
 from map import Map
 from renderer.object_renderer import ObjectRenderer
-from renderer.sprite_object import SpriteObject
+from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
+from objects_manager import ObjectsManager
 
 
 class Game:
@@ -32,8 +33,10 @@ class Game:
         self.map: Map = Map("DOOM/resources/map_data/map.txt")
         self.object_renderer = ObjectRenderer(self)
         self.raycast: Raycasting = Raycasting(self)
-
-        self.static_sprite = SpriteObject(self, "candle", (2.5, 2.5), 0.75, 0.25)
+        self.object_manager: ObjectsManager = ObjectsManager(self, [
+            SpriteObject(self, "candle", (2.5, 2.5), 0.75, 0.25),
+            AnimatedSpriteObject(self, "torch_big_blue", 120, (5.5, 2.5), 0.75, 0.25)
+        ])
         
     def __frame(self) -> None:
         self.__events()
@@ -49,7 +52,7 @@ class Game:
 
         self.player.update()
         self.raycast.update()
-        self.static_sprite.update()
+        self.object_manager.update()
     
     def __draw(self) -> None:
         self.object_renderer.draw()

@@ -1,4 +1,6 @@
 import pygame as pg
+import os
+from collections import deque
 
 from config import *
 from player import Player
@@ -56,3 +58,42 @@ class SpriteObject:
 
     def update(self) -> None:
         self.get_sprite()
+
+
+class AnimatedSpriteObject(SpriteObject):
+    def __init__(self, game, sprite_sheet_dir: str, animation_time: float, position: tuple[float, float], scale: float = 1, shift: float = 0) -> None:
+        super().__init__(game, sprite_sheet_dir + "/0", position, scale, shift)
+        
+        self.animation_time = animation_time
+        self.path = "DOOM/resources/textures/sprites/" + sprite_sheet_dir
+        self.images = self.get_images(self.path)
+
+        self.anim_time_prev: float = pg.time.get_ticks()
+        self.anim_trigger: bool = False
+
+    def update(self) -> None:
+        super().update()
+        self.check_anim_time()
+        self.animate()
+
+    def animate(self) -> None:
+        if self.anim_trigger:
+            self.images.rotate(-1)
+            self.image = self.images[0]
+
+    def check_anim_time(self) -> None:
+        self.anim_trigger = False
+        t_now = pg.time.get_ticks()
+        if t_now - self.anim_time_prev > self.animation_time:
+            self.anim_time_prev = t_now
+            self.anim_trigger = True
+
+    def get_images(self, path: str) -> deque:
+        images = deque()
+
+        for file_name in os.listdir(path):
+            if os.path.isfile(os.path.join(path, file_name)):
+                img = pg.image.load(path + "/" + file_name).convert_alpha()
+                images.append(img)
+
+        return images
