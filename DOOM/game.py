@@ -6,7 +6,8 @@ from player import Player
 from map import Map
 from renderer.object_renderer import ObjectRenderer
 from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
-from objects_manager import ObjectsManager
+from renderer.objects_manager import ObjectsManager
+from weapon import *
 
 
 class Game:
@@ -30,12 +31,14 @@ class Game:
 
     def __init(self) -> None:
         self.player: Player = Player(self)
+        self.player.set_weapon(Pistol(self))
         self.map: Map = Map("DOOM/resources/map_data/map.txt")
         self.object_renderer = ObjectRenderer(self)
         self.raycast: Raycasting = Raycasting(self)
         self.object_manager: ObjectsManager = ObjectsManager(self, [
             SpriteObject(self, "candle", (2.5, 2.5), 0.75, 0.25),
-            AnimatedSpriteObject(self, "torch_big_blue", 120, (5.5, 2.5), 0.75, 0.25)
+            AnimatedSpriteObject(self, "torch_big_blue", 120, (5.5, 2.5), 0.75, 0.25),
+            SpriteObject(self, "hanging_corpse", (2.5, 3.5), 1, 0)
         ])
         
     def __frame(self) -> None:
@@ -56,11 +59,14 @@ class Game:
     
     def __draw(self) -> None:
         self.object_renderer.draw()
+        self.player.weapon.draw()
 
     def __events(self) -> None:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.__quit()
+
+            self.player.single_weapon_fire(event)
 
     def run(self) -> None:
         self.__init()

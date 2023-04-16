@@ -2,6 +2,7 @@ import math
 import pygame as pg
 
 from config import *
+from weapon import *
 
 
 class Player:
@@ -11,6 +12,18 @@ class Player:
         self.x, self.y = 1.5, 1.5
         self.diag_move_corr = 1 / math.sqrt(2)
         self.mouse_rel: float = 0
+
+        self.weapon: Weapon = None  # avoid circular initialization by setting this later
+        self.weapon_shot: bool = False
+    
+    def single_weapon_fire(self, event: pg.event.Event) -> None:
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1 and not self.weapon_shot and not self.weapon.reloading:
+                self.weapon_shot = True
+                self.weapon.reloading = True
+
+    def set_weapon(self, weapon: Weapon) -> None:
+        self.weapon = weapon
     
     def movement(self) -> None:
         sin_a = math.sin(self.angle)
@@ -46,10 +59,6 @@ class Player:
 
         self.check_collision(dx, dy)
 
-        # if keys[pg.K_LEFT]:
-        #     self.angle -= PLAYER_ROT_SPEED * self.game.deltatime
-        # if keys[pg.K_RIGHT]:
-        #     self.angle += PLAYER_ROT_SPEED * self.game.deltatime
         self.angle %= math.tau
 
     def check_collision(self, dx: float, dy: float) -> None:
@@ -75,3 +84,4 @@ class Player:
     def update(self) -> None:
         self.movement()
         self.mouse_control()
+        self.weapon.update()

@@ -3,13 +3,12 @@ import os
 from collections import deque
 
 from config import *
-from player import Player
 
 
 class SpriteObject:
-    def __init__(self, game, image_name: str, position: tuple[float, float], scale: float = 1, shift: float = 0) -> None:
+    def __init__(self, game, image_name: str, position: tuple[float, float] = (0, 0), scale: float = 1, shift: float = 0) -> None:
         self.game = game
-        self.player: Player = self.game.player
+        self.player = self.game.player
         self.x, self.y = position
         self.image: pg.Surface = pg.image.load("DOOM/resources/textures/sprites/" + image_name + ".png").convert_alpha()
         self.image_width, self.image_height = self.image.get_size()
@@ -61,7 +60,7 @@ class SpriteObject:
 
 
 class AnimatedSpriteObject(SpriteObject):
-    def __init__(self, game, sprite_sheet_dir: str, animation_time: float, position: tuple[float, float], scale: float = 1, shift: float = 0) -> None:
+    def __init__(self, game, sprite_sheet_dir: str, animation_time: float, position: tuple[float, float] = (0, 0), scale: float = 1, shift: float = 0) -> None:
         super().__init__(game, sprite_sheet_dir + "/0", position, scale, shift)
         
         self.animation_time = animation_time

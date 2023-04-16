@@ -24,7 +24,7 @@ SCALE: int = WIN_WIDTH // RAYS
 # Z_SCALING_FACTOR: float = Z_FAR / (Z_FAR - Z_NEAR)
 
 PLAYER_ROT_SPEED: float = math.radians(120)
-PLAYER_MOVE_SPEED: float = 5
+PLAYER_MOVE_SPEED: float = 3.5
 PLAYER_SIZE_SCALE: float = 0.03
 
 MOUSE_SPEED: float = 0.0025
