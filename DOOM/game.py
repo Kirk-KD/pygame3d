@@ -3,7 +3,7 @@ import pygame as pg
 from config import *
 from renderer.raycasting import Raycasting
 from player import Player
-from map import Map
+from level import Level
 from renderer.object_renderer import ObjectRenderer
 from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
 from renderer.objects_manager import ObjectsManager
@@ -32,8 +32,8 @@ class Game:
     def __init(self) -> None:
         self.player: Player = Player(self)
         self.player.set_weapon(Pistol(self))
-        self.map: Map = Map("DOOM/resources/map_data/map.txt")
         self.object_renderer = ObjectRenderer(self)
+        self.level: Level = Level("DOOM/resources/map_data/map.txt")
         self.raycast: Raycasting = Raycasting(self)
         self.object_manager: ObjectsManager = ObjectsManager(self, [
             SpriteObject(self, "candle", (2.5, 2.5), 0.75, 0.25),

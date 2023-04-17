@@ -8,10 +8,13 @@ from renderer.texture import TextureData
 class ObjectRenderer:
     """All renderings done here."""
 
+    WALL_TEXTURES_KEYS = []
+
     def __init__(self, game) -> None:
         self.game = game
         self.surface: pg.Surface = game.surface
         self.wall_textures: dict[int, TextureData] = self.load_wall_textures()
+        ObjectRenderer.WALL_TEXTURES_KEYS = list(self.wall_textures.keys())
         self.sky_texture: TextureData = self.load_sky_texture()
         self.sky_offset: float = 0
     
@@ -41,7 +44,7 @@ class ObjectRenderer:
             if not os.path.isfile(path):
                 break
 
-            walls[i] = TextureData(path)
+            walls[str(i)] = TextureData(path)
             i += 1
         return walls
 

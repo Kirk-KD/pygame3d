@@ -2,29 +2,37 @@ from config import *
 
 
 class Map:
-    def __init__(self, path: str) -> None:
-        self.map: list[list[int]] = self.load_map(path)
-        self.height: int = len(self.map)
-        self.width: int = len(self.map[0])
+    def __init__(self) -> None:
+        self.map: list[list[str]] = []
+        self.height: int = 0
+        self.width: int = 0
+    
+    def load(self, map: list[list[str]]) -> None:
+        self.map = map
+        self.height = len(self.map)
+        self.width = len(self.map[0])
 
     def unoccupied(self, x: int, y: int) -> bool:
         if 0 <= x < self.width and 0 <= y < self.height:
-            return self.map[y][x] == 0
+            try:
+                return self.map[y][x] == " "
+            except IndexError:
+                return True
         
         return True
 
-    def load_map(self, path: str) -> list[list[int]]:
-        result = [[]]
-        with open(path, "r") as f:
-            s = f.read()
-            for c in s:
-                if c == "\n":
-                    result.append([])
-                elif c == " ":
-                    result[-1].append(0)
-                else:
-                    result[-1].append(int(c))
-        return result
+    # def load_map(self, path: str) -> list[list[int]]:
+    #     result = [[]]
+    #     with open(path, "r") as f:
+    #         s = f.read()
+    #         for c in s:
+    #             if c == "\n":
+    #                 result.append([])
+    #             elif c == " ":
+    #                 result[-1].append(0)
+    #             else:
+    #                 result[-1].append(int(c))
+    #     return result
     
     def __str__(self) -> str:
         res = ""

@@ -11,7 +11,7 @@ class Raycasting:
     def __init__(self, game) -> None:
         self.game = game
         self.player: Player = self.game.player
-        self.map: Map = self.game.map
+        self.map: Map = self.game.level.map
         self.surf = self.game.surface
 
         self.textures: dict[int, TextureData] = self.game.object_renderer.wall_textures

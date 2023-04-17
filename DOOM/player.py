@@ -63,9 +63,9 @@ class Player:
 
     def check_collision(self, dx: float, dy: float) -> None:
         scale = PLAYER_SIZE_SCALE / self.game.deltatime
-        if self.game.map.unoccupied(int(self.x + dx * scale), int(self.y)):
+        if self.game.level.map.unoccupied(int(self.x + dx * scale), int(self.y)):
             self.x += dx
-        if self.game.map.unoccupied(int(self.x), int(self.y + dy * scale)):
+        if self.game.level.map.unoccupied(int(self.x), int(self.y + dy * scale)):
             self.y += dy
 
     def mouse_control(self) -> None:
