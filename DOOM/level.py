@@ -1,6 +1,7 @@
 from map import Map
 from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
 from renderer.object_renderer import ObjectRenderer
+from renderer.objects_manager import OBJECTS
 
 
 MAP_START = "map start"
@@ -10,8 +11,10 @@ OBJECT_END = "object end"
 
 
 class Level:
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, game) -> None:
         self.path: str = path
+        self.game = game
+        self.objects_manager = game.objects_manager
 
         self.map: Map = Map()
         self.sprite_objects: list[SpriteObject] = []
@@ -32,6 +35,7 @@ class Level:
 
         for lineno, line in enumerate(lines):
             print("Read:", line)
+            line = line.strip()
 
             if len(line) == 0 or line.startswith("#"):
                 continue
@@ -59,10 +63,19 @@ class Level:
 
             if line.startswith(OBJECT):
                 object_name = line[len(OBJECT):]
+                if object_name not in OBJECTS:
+                    raise Exception(f"No object named '{object_name}' found!")
                 continue
 
             if object_name:
-                pass  # TODO add objects
+                obj_x, obj_y = line.split()
+                obj_x, obj_y = float(obj_x), float(obj_y)
+                try:
+                    if map[int(obj_y)][int(obj_x)] != " ":
+                        print(f"\nWARN: {object_name} at {obj_x, obj_y} is in a wall!\n")
+                except IndexError:
+                    pass
+                self.objects_manager.add_sprite(OBJECTS[object_name].make_at_position(self.game, (float(obj_x), float(obj_y))))
 
             if map_start and not map_end:  # started reading the map but didn't stop yet
                 map_row = []

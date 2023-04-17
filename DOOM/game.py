@@ -33,13 +33,9 @@ class Game:
         self.player: Player = Player(self)
         self.player.set_weapon(Pistol(self))
         self.object_renderer = ObjectRenderer(self)
-        self.level: Level = Level("DOOM/resources/map_data/map.txt")
+        self.objects_manager: ObjectsManager = ObjectsManager(self)
+        self.level: Level = Level("DOOM/resources/map_data/map.txt", self)
         self.raycast: Raycasting = Raycasting(self)
-        self.object_manager: ObjectsManager = ObjectsManager(self, [
-            SpriteObject(self, "candle", (2.5, 2.5), 0.75, 0.25),
-            AnimatedSpriteObject(self, "torch_big_blue", 120, (5.5, 2.5), 0.75, 0.25),
-            SpriteObject(self, "hanging_corpse", (2.5, 3.5), 1, 0)
-        ])
         
     def __frame(self) -> None:
         self.__events()
@@ -55,7 +51,7 @@ class Game:
 
         self.player.update()
         self.raycast.update()
-        self.object_manager.update()
+        self.objects_manager.update()
     
     def __draw(self) -> None:
         self.object_renderer.draw()
