@@ -52,7 +52,7 @@ class Level:
 
             if line == OBJECT_END:
                 if object_name is None:
-                    raise Exception("No object definition of end!")
+                    raise Exception("No object definition to end!")
 
                 object_name = None
                 continue

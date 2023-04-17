@@ -20,19 +20,6 @@ class Map:
                 return True
         
         return True
-
-    # def load_map(self, path: str) -> list[list[int]]:
-    #     result = [[]]
-    #     with open(path, "r") as f:
-    #         s = f.read()
-    #         for c in s:
-    #             if c == "\n":
-    #                 result.append([])
-    #             elif c == " ":
-    #                 result[-1].append(0)
-    #             else:
-    #                 result[-1].append(int(c))
-    #     return result
     
     def __str__(self) -> str:
         res = ""
