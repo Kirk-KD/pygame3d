@@ -34,7 +34,7 @@ class Game:
         self.player.set_weapon(Pistol(self))
         self.object_renderer = ObjectRenderer(self)
         self.objects_manager: ObjectsManager = ObjectsManager(self, enemies=[Enemy(self, 5, 3, 100, 10, 0.3, "enemies/zombieman", 200, (1.5, 1.5), 0.75, 0.35)])
-        self.level: Level = Level("DOOM/resources/map_data/map.txt", self)
+        self.level: Level = Level("DOOM/resources/map_data/map2.txt", self)
         self.raycast: Raycasting = Raycasting(self)
         
     def __frame(self) -> None:

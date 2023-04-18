@@ -10,7 +10,7 @@ class Map:
     def load(self, map: list[list[str]]) -> None:
         self.map = map
         self.height = len(self.map)
-        self.width = len(self.map[0])
+        self.width = max(len(row) for row in self.map)
 
     def unoccupied(self, x: int, y: int) -> bool:
         if 0 <= x < self.width and 0 <= y < self.height:

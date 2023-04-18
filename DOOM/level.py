@@ -35,7 +35,6 @@ class Level:
 
         for lineno, line in enumerate(lines):
             print("Read:", line)
-            line = line.strip()
 
             if len(line) == 0 or line.startswith("#"):
                 continue
