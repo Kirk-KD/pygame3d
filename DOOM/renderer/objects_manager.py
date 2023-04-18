@@ -1,3 +1,4 @@
+from enemy import Enemy
 from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
 
 
@@ -25,13 +26,21 @@ OBJECTS = {
 
 
 class ObjectsManager:
-    def __init__(self, game, objects: list[SpriteObject] = []) -> None:
+    def __init__(self, game, objects: list[SpriteObject] = [], enemies: list[SpriteObject] = []) -> None:
         self.game = game
-        self.objects = objects
+
+        self.objects: list[SpriteObject] = objects
+        self.enemies: list[Enemy] = enemies
 
     def add_sprite(self, sprite: SpriteObject) -> None:
         self.objects.append(sprite)
     
+    def add_enemy(self, enemy: Enemy) -> None:
+        self.enemies.append(enemy)
+    
     def update(self) -> None:
         for obj in self.objects:
             obj.update()
+
+        for enemy in self.enemies:
+            enemy.update()

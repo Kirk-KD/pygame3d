@@ -73,12 +73,12 @@ class AnimatedSpriteObject(SpriteObject):
     def update(self) -> None:
         super().update()
         self.check_anim_time()
-        self.animate()
+        self.animate(self.images)
 
-    def animate(self) -> None:
+    def animate(self, images) -> None:
         if self.anim_trigger:
-            self.images.rotate(-1)
-            self.image = self.images[0]
+            images.rotate(-1)
+            self.image = images[0]
 
     def check_anim_time(self) -> None:
         self.anim_trigger = False

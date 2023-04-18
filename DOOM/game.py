@@ -5,9 +5,9 @@ from renderer.raycasting import Raycasting
 from player import Player
 from level import Level
 from renderer.object_renderer import ObjectRenderer
-from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
 from renderer.objects_manager import ObjectsManager
 from weapon import *
+from enemy import Enemy
 
 
 class Game:
@@ -33,7 +33,7 @@ class Game:
         self.player: Player = Player(self)
         self.player.set_weapon(Pistol(self))
         self.object_renderer = ObjectRenderer(self)
-        self.objects_manager: ObjectsManager = ObjectsManager(self)
+        self.objects_manager: ObjectsManager = ObjectsManager(self, enemies=[Enemy(self, 5, 3, 100, 10, 0.3, "enemies/zombieman", 200, (1.5, 1.5), 0.75, 0.35)])
         self.level: Level = Level("DOOM/resources/map_data/map.txt", self)
         self.raycast: Raycasting = Raycasting(self)
         
@@ -49,9 +49,9 @@ class Game:
     def __update(self) -> None:
         """All updates that do not involve drawing to the screen go here. Should be called before `self.__draw()`."""
 
-        self.player.update()
         self.raycast.update()
         self.objects_manager.update()
+        self.player.update()
     
     def __draw(self) -> None:
         self.object_renderer.draw()
