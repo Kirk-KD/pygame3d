@@ -78,7 +78,7 @@ class Level:
 
             if map_start and not map_end:  # started reading the map but didn't stop yet
                 map_row = []
-                for c in line:
+                for c in line.strip():
                     if c == " ":
                         map_row.append(" ")
                     elif c in ObjectRenderer.WALL_TEXTURES_KEYS:
