@@ -43,7 +43,7 @@ class Raycasting:
         ox, oy = self.player.position
         x_grid, y_grid = self.player.grid_position
 
-        tex_vert, tex_hor = -1, -1
+        tex_vert, tex_hor = 1, 1
 
         ray_angle = self.player.angle - HALF_FOV + 0.0001
         for ray in range(RAYS):

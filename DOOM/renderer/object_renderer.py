@@ -38,15 +38,10 @@ class ObjectRenderer:
 
     def load_wall_textures(self) -> dict[int, TextureData]:
         walls = {}
-        i = 1
-        while True:
-            path = f"DOOM/resources/textures/walls/{i}.png"
-            if not os.path.isfile(path):
-                break
-
-            walls[str(i)] = TextureData(path)
-            i += 1
+        base = "DOOM/resources/textures/walls/"
+        for path in os.listdir(base):
+            walls[path.split(".")[0]] = TextureData(base + path)
         return walls
 
     def load_sky_texture(self) -> TextureData:
-        return TextureData("DOOM/resources/textures/sky.png", (WIN_WIDTH, WIN_HALF_HEIGHT))
+        return TextureData("DOOM/resources/textures/skies/0.png", (WIN_WIDTH, WIN_HALF_HEIGHT))

@@ -1,7 +1,12 @@
 from PIL import Image
 
 RGB_TO_TEX = {
-    (0, 0, 0): "1"
+    (0, 0, 0): "STARTAN3",
+    (255, 0, 0): "STARG3",
+    (0, 255, 0): "COMPTILE",
+    (0, 0, 255): "COMPOHSO",
+    (255, 255, 0): "BROWN1",
+    (255, 0, 255): "BROWN96"
 }
 
 
