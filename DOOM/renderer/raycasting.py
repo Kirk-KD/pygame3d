@@ -97,7 +97,7 @@ class Raycasting:
 
             proj_height = SCREEN_DISTANCE / (depth + 0.0001)
 
-            self.raycast_result.append((depth, proj_height, texture, offset))
+            self.raycast_result.append((depth, proj_height, str(texture), offset))
 
             # color = [255 / (1 + depth ** 7 * 0.00002)] * 3
             # pg.draw.rect(self.surf, color, (ray * SCALE, WIN_HALF_HEIGHT - proj_height // 2, SCALE, proj_height))

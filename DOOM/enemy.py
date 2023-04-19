@@ -48,16 +48,19 @@ class Enemy(AnimatedSpriteObject):
         in_attack = self.player_in_attack_distance()
 
         if in_detection:
-            if in_attack and not self.can_see_player:
-                self.pathfind()
-                self.movement()
-
-            if not in_attack:
+            if in_attack:
                 if self.can_see_player:
-                    self.target_position = self.game.player.grid_position
+                    pass
                 else:
                     self.pathfind()
-                self.movement()
+                    self.movement()
+            else:
+                if self.can_see_player:
+                    self.target_position = self.game.player.grid_position
+                    self.movement()
+                else:
+                    self.pathfind()
+                    self.movement()
 
         self.check_hit()
         self.check_death()

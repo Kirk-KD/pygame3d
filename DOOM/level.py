@@ -1,4 +1,6 @@
+import math
 from map import Map
+from png_map import PNGMap
 from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
 from renderer.object_renderer import ObjectRenderer
 from renderer.objects_manager import OBJECTS
@@ -8,6 +10,7 @@ MAP_START = "map start"
 MAP_END = "map end"
 OBJECT = "object "
 OBJECT_END = "object end"
+PLAYER = "player "
 
 
 class Level:
@@ -16,6 +19,7 @@ class Level:
         self.game = game
         self.objects_manager = game.objects_manager
 
+        self.png_map: PNGMap = PNGMap(self.path + ".png")
         self.map: Map = Map()
         self.sprite_objects: list[SpriteObject] = []
 
@@ -24,7 +28,7 @@ class Level:
     def load(self) -> None:
         print("Loaded wall texture keys:", ObjectRenderer.WALL_TEXTURES_KEYS)
 
-        with open(self.path, "r") as f:
+        with open(self.path + ".txt", "r") as f:
             lines = f.read().split("\n")
         
         map_start = False
@@ -32,6 +36,8 @@ class Level:
         map = []
 
         object_name = None
+
+        player_pos = None
 
         for lineno, line in enumerate(lines):
             print("Read:", line)
@@ -65,6 +71,14 @@ class Level:
                 if object_name not in OBJECTS:
                     raise Exception(f"No object named '{object_name}' found!")
                 continue
+                
+            if line.startswith(PLAYER):
+                if player_pos is not None:
+                    raise Exception("Cannot define player spawn pos twice!")
+                p = line[len(PLAYER):].split()
+                player_pos = float(p[0]), float(p[1])
+                player_rot = math.radians(float(p[2]) + 85)
+                continue
 
             if object_name:
                 obj_x, obj_y = line.split()
@@ -94,6 +108,11 @@ class Level:
         if object_name:
             raise Exception("Object definition did not end!")
         
-        self.map.load(map)
+        # self.map.load(map)
+        self.map.load(self.png_map.to_map())
+        if player_pos:
+            self.game.player.x, self.game.player.y = player_pos
+            self.game.player.angle = player_rot
+            print(f"PLAYER SPAWN SET: {player_pos}, ROTATION: {player_rot}")
 
         print("Level loaded!")
