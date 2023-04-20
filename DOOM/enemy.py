@@ -1,6 +1,5 @@
 from collections import deque
 import math
-import random
 
 from config import *
 from renderer.sprite_object import AnimatedSpriteObject
@@ -86,12 +85,15 @@ class Enemy(AnimatedSpriteObject):
         if self.target_position is None:
             return
         
+        if self.attack:
+            return
+        
         self.walk = True
         
         tx, ty = self.target_position
         angle = math.atan2(ty + 0.5 - self.y, tx + 0.5 - self.x)
-        dx = math.cos(angle) * self.speed * self.game.deltatime
-        dy = math.sin(angle) * self.speed * self.game.deltatime
+        dx = math.cos(angle) * self.speed
+        dy = math.sin(angle) * self.speed
         self.check_collision(dx, dy)
         # self.x += dx
         # self.y += dy
@@ -206,9 +208,31 @@ class Enemy(AnimatedSpriteObject):
         return math.hypot(self.game.player.x - self.x, self.game.player.y - self.y) < self.attack_distance
 
     def pathfind(self) -> None:
-        x, y = self.game.level.map.astar_next(self.grid_position, self.game.player.grid_position)
+        xy = self.game.level.map.astar_next(self.grid_position, self.game.player.grid_position)
+        if not xy:
+            return
+        x, y = xy
         self.target_position = x + 0.5, y + 0.5
 
     @property
     def grid_position(self) -> tuple[int, int]:
         return int(self.x), int(self.y)
+    
+
+class Zombieman(Enemy):
+    def __init__(self, game, position: tuple[float, float]):
+        super().__init__(game=game,
+                         detection_distance=10,
+                         attack_distance=6,
+                         speed=0.03,
+                         health=100,
+                         damage=10,
+                         accuracy=0.3,
+                         base_path="enemies/zombieman",
+                         anim_time=200,
+                         position=position,
+                         scale=0.7,
+                         shift=0.25)
+
+
+ENEMIES = {"zombieman": Zombieman}

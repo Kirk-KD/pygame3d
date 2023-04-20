@@ -26,6 +26,8 @@ class ObjectRenderer:
     def render_objects(self) -> None:
         objs = sorted(self.game.raycast.objs_to_render, reverse=True, key=lambda o: o[0])
         for depth, image, pos in objs:
+            color = [255 / (1 + depth ** 5 * 0.00001)] * 3
+            image.fill(color, special_flags=pg.BLEND_RGB_MULT)
             self.surface.blit(image, pos)
 
     def render_sky(self) -> None:

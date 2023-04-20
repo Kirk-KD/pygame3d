@@ -4,10 +4,13 @@ from png_map import PNGMap
 from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
 from renderer.object_renderer import ObjectRenderer
 from renderer.objects_manager import OBJECTS
+from enemy import ENEMIES
 
 
 OBJECT = "object "
 OBJECT_END = "object end"
+ENEMY = "enemy "
+ENEMY_END = "enemy end"
 PLAYER = "player "
 
 
@@ -30,6 +33,7 @@ class Level:
             lines = f.read().split("\n")
 
         object_name = None
+        enemy_name = None
 
         player_pos = None
 
@@ -61,9 +65,30 @@ class Level:
                 continue
 
             if object_name:
-                obj_x, obj_y = line.split()
+                obj_x, obj_y = line.strip().split()
                 obj_x, obj_y = float(obj_x), float(obj_y)
                 self.objects_manager.add_sprite(OBJECTS[object_name].make_at_position(self.game, (float(obj_x), float(obj_y))))
+                continue
+
+            if line == ENEMY_END:
+                enemy_name = None
+                continue
+
+            if line.startswith(ENEMY):
+                if enemy_name is not None:
+                    raise Exception(f"Didn't end enemy def!")
+
+                enemy_name = line[len(ENEMY):]
+                if enemy_name not in ENEMIES:
+                    raise Exception(f"No enemy named '{enemy_name}'!")
+                
+                continue
+
+            if enemy_name:
+                enemy_x, enemy_y = line.strip().split()
+                enemy_x, enemy_y = float(enemy_x), float(enemy_y)
+                self.objects_manager.add_enemy(ENEMIES[enemy_name](self.game, (enemy_x, enemy_y)))
+                continue
         
         if object_name:
             raise Exception("Object definition did not end!")
