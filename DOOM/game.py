@@ -6,6 +6,7 @@ from player import Player
 from level import Level
 from renderer.object_renderer import ObjectRenderer
 from renderer.objects_manager import ObjectsManager
+from audio import AudioManager
 from weapon import *
 from enemy import Enemy
 
@@ -30,10 +31,12 @@ class Game:
         pg.mouse.set_visible(False)
 
     def __init(self) -> None:
+        self.audio_manager: AudioManager = AudioManager()
+        self.audio_manager.load("E1M1.mp3")
         self.player: Player = Player(self)
-        self.player.set_weapon(Pistol(self))
+        self.player.set_weapon(Shotgun(self))
         self.object_renderer = ObjectRenderer(self)
-        self.objects_manager: ObjectsManager = ObjectsManager(self, enemies=[Enemy(self, 15, 6, 1, 100, 10, 0.3, "enemies/zombieman", 200, (14.5, 13.5), 0.7, 0.3)])
+        self.objects_manager: ObjectsManager = ObjectsManager(self, enemies=[Enemy(self, 15, 6, 1, 100, 10, 0.3, "enemies/zombieman", 200, (14.5, 13.5), 0.7, 0.25)])
         # self.objects_manager: ObjectsManager = ObjectsManager(self)
         self.level: Level = Level("DOOM/resources/map_data/e1m1", self)
         self.raycast: Raycasting = Raycasting(self)
@@ -69,6 +72,8 @@ class Game:
         self.__init()
 
         self.running = True
+
+        self.audio_manager.play_music()
         while self.running:
             self.__frame()
 

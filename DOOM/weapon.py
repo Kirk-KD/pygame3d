@@ -6,7 +6,7 @@ from config import *
 
 
 class Weapon(AnimatedSpriteObject):
-    def __init__(self, game, damage: int, sprite_sheet_dir: str, frame_time: float, scale: float) -> None:
+    def __init__(self, game, damage: int, sprite_sheet_dir: str, frame_time: float, scale: float, sound: pg.mixer.Sound) -> None:
         super().__init__(game, sprite_sheet_dir, animation_time=frame_time, scale=scale)
         self.images = deque([pg.transform.scale(img, (img.get_width() * self.sprite_scale, img.get_height() * self.sprite_scale))
                              for img in self.images])
@@ -16,6 +16,8 @@ class Weapon(AnimatedSpriteObject):
         self.damage: int = damage
         self.num_images: int = len(self.images)
         self.frame_counter: int = 0
+
+        self.sound: pg.mixer.Sound = sound
     
     def animate_shot(self) -> None:
         if self.reloading:
@@ -35,6 +37,9 @@ class Weapon(AnimatedSpriteObject):
     def draw(self) -> None:
         self.game.surface.blit(self.images[0], self.weapon_position)
     
+    def play_sound(self) -> None:
+        self.game.audio_manager.play(self.sound)
+    
     def update(self) -> None:
         self.check_anim_time()
         self.animate_shot()
@@ -42,9 +47,9 @@ class Weapon(AnimatedSpriteObject):
 
 class Shotgun(Weapon):
     def __init__(self, game) -> None:
-        super().__init__(game, 50, "weapons/shotgun", 100, 4)
+        super().__init__(game, 50, "weapons/shotgun", 100, 4, game.audio_manager.shotgun)
 
 
 class Pistol(Weapon):
     def __init__(self, game) -> None:
-        super().__init__(game, 30, "weapons/pistol", 90, 4)
+        super().__init__(game, 30, "weapons/pistol", 90, 4, game.audio_manager.pistol)

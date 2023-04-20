@@ -17,15 +17,11 @@ MAX_DEPTH = 20
 SCREEN_DISTANCE: float = WIN_HALF_WIDTH / math.tan(HALF_FOV)
 SCALE: int = WIN_WIDTH // RAYS
 
-# SCALING_FACTOR: float = 1 / math.tan(FOV / 2)
-
-# Z_FAR: float = 1000
-# Z_NEAR: float = 0.2
-# Z_SCALING_FACTOR: float = Z_FAR / (Z_FAR - Z_NEAR)
-
 PLAYER_ROT_SPEED: float = math.radians(120)
 PLAYER_MOVE_SPEED: float = 3.5
 PLAYER_SIZE_SCALE: float = 0.03
+
+ENEMY_SIZE_SCALE: float = 0.3
 
 MOUSE_SPEED: float = 0.0025
 MOUSE_MAX_REL: float = 40

@@ -74,6 +74,13 @@ class Enemy(AnimatedSpriteObject):
             self.animate_walk()
         else:
             self.animate(self.idle_anim)
+
+    def check_collision(self, dx: float, dy: float) -> None:
+        scale = ENEMY_SIZE_SCALE / self.game.deltatime
+        if self.game.level.map.unoccupied(int(self.x + dx * scale), int(self.y)):
+            self.x += dx
+        if self.game.level.map.unoccupied(int(self.x), int(self.y + dy * scale)):
+            self.y += dy
     
     def movement(self) -> None:
         if self.target_position is None:
@@ -83,10 +90,11 @@ class Enemy(AnimatedSpriteObject):
         
         tx, ty = self.target_position
         angle = math.atan2(ty + 0.5 - self.y, tx + 0.5 - self.x)
-        dx = math.cos(angle) * self.speed
-        dy = math.sin(angle) * self.speed
-        self.x += dx * self.game.deltatime
-        self.y += dy * self.game.deltatime
+        dx = math.cos(angle) * self.speed * self.game.deltatime
+        dy = math.sin(angle) * self.speed * self.game.deltatime
+        self.check_collision(dx, dy)
+        # self.x += dx
+        # self.y += dy
     
     def animate_pain(self) -> None:
         self.animate(self.pain_anim)
