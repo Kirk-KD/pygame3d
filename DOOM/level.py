@@ -11,6 +11,7 @@ OBJECT = "object "
 OBJECT_END = "object end"
 ENEMY = "enemy "
 ENEMY_END = "enemy end"
+SKY = "sky "
 PLAYER = "player "
 
 
@@ -34,7 +35,7 @@ class Level:
 
         object_name = None
         enemy_name = None
-
+        sky_name = None
         player_pos = None
 
         for lineno, line in enumerate(lines):
@@ -84,6 +85,12 @@ class Level:
                 
                 continue
 
+            if line.startswith(SKY):
+                if sky_name is not None:
+                    raise Exception(f"Already defined sky!")
+                
+                sky_name = line[len(SKY):]
+
             if enemy_name:
                 enemy_x, enemy_y = line.strip().split()
                 enemy_x, enemy_y = float(enemy_x), float(enemy_y)
@@ -99,5 +106,8 @@ class Level:
             self.game.player.x, self.game.player.y = player_pos
             self.game.player.angle = player_rot
             print(f"PLAYER SPAWN SET: {player_pos}, ROTATION: {player_rot}")
+        if sky_name:
+            self.game.object_renderer.load_sky_texture(sky_name)
+            print(f"LOADED SKY TEXTURE: {sky_name}")
 
         print("Level loaded!")

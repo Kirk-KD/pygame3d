@@ -31,11 +31,16 @@ class Player:
         cos_a = math.cos(self.angle)
         dx, dy = 0, 0
         speed = PLAYER_MOVE_SPEED * self.game.deltatime
-        speed_sin = speed * sin_a
-        speed_cos = speed * cos_a
 
         keys = pg.key.get_pressed()
         num_key_pressed = -1
+
+        if keys[pg.K_LSHIFT]:
+            speed *= 1.65
+        
+        speed_sin = speed * sin_a
+        speed_cos = speed * cos_a
+
         if keys[pg.K_w]:
             num_key_pressed += 1
             dx += speed_cos

@@ -15,7 +15,7 @@ class ObjectRenderer:
         self.surface: pg.Surface = game.surface
         self.wall_textures: dict[int, TextureData] = self.load_wall_textures()
         ObjectRenderer.WALL_TEXTURES_KEYS = list(self.wall_textures.keys())
-        self.sky_texture: TextureData = self.load_sky_texture()
+        self.sky_texture: TextureData = None
         self.sky_offset: float = 0
     
     def draw(self) -> None:
@@ -26,7 +26,7 @@ class ObjectRenderer:
     def render_objects(self) -> None:
         objs = sorted(self.game.raycast.objs_to_render, reverse=True, key=lambda o: o[0])
         for depth, image, pos in objs:
-            color = [255 / (1 + depth ** 5 * 0.00001)] * 3
+            color = [min(255 / (1 + depth ** 5 * 0.00001), 230)] * 3
             image.fill(color, special_flags=pg.BLEND_RGB_MULT)
             self.surface.blit(image, pos)
 
@@ -45,5 +45,6 @@ class ObjectRenderer:
             walls[path.split(".")[0]] = TextureData(base + path)
         return walls
 
-    def load_sky_texture(self) -> TextureData:
-        return TextureData("DOOM/resources/textures/skies/0.png", (WIN_WIDTH, WIN_HALF_HEIGHT))
+    def load_sky_texture(self, file_name: str) -> TextureData:
+        self.sky_texture = TextureData(f"DOOM/resources/textures/skies/{file_name}.png", (WIN_WIDTH, WIN_HALF_HEIGHT))
+        self.sky_texture.texture.fill((210, 210, 210), special_flags=pg.BLEND_RGB_MULT)

@@ -1,4 +1,5 @@
 player 10.5 18.5 180
+sky 1
 
 object torch_big_blue
     8.1 13.7
