@@ -1,10 +1,10 @@
 import math
 
-WIN_WIDTH: int = 1600
+# 4:3 ratio window
+WIN_WIDTH: int = 1200
+WIN_HEIGHT: int = int(0.75 * WIN_WIDTH)
 WIN_HALF_WIDTH: int = WIN_WIDTH // 2
-WIN_HEIGHT: int = 900
 WIN_HALF_HEIGHT: int = WIN_HEIGHT // 2
-# ASPECT_RATIO: float = 1  # square window
 
 FPS: int = 60
 

@@ -45,6 +45,6 @@ class ObjectRenderer:
             walls[path.split(".")[0]] = TextureData(base + path)
         return walls
 
-    def load_sky_texture(self, file_name: str) -> TextureData:
+    def load_sky_texture(self, file_name: str) -> None:
         self.sky_texture = TextureData(f"DOOM/resources/textures/skies/{file_name}.png", (WIN_WIDTH, WIN_HALF_HEIGHT))
         self.sky_texture.texture.fill((210, 210, 210), special_flags=pg.BLEND_RGB_MULT)

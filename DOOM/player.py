@@ -15,6 +15,8 @@ class Player:
 
         self.weapon: Weapon = None  # avoid circular initialization by setting this later
         self.weapon_shot: bool = False
+
+        self.health: int = 100
     
     def single_weapon_fire(self, event: pg.event.Event) -> None:
         if event.type == pg.MOUSEBUTTONDOWN:

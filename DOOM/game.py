@@ -1,5 +1,6 @@
 import pygame as pg
 
+from renderer.hud_renderer import HUDRenderer
 from config import *
 from renderer.raycasting import Raycasting
 from player import Player
@@ -8,7 +9,6 @@ from renderer.object_renderer import ObjectRenderer
 from renderer.objects_manager import ObjectsManager
 from audio import AudioManager
 from weapon import *
-from enemy import Enemy
 
 
 class Game:
@@ -33,9 +33,10 @@ class Game:
     def __init(self) -> None:
         self.audio_manager: AudioManager = AudioManager()
         self.audio_manager.load("E1M1.mp3")
+        self.hud_renderer: HUDRenderer = HUDRenderer(self)
         self.player: Player = Player(self)
-        self.player.set_weapon(Shotgun(self))
-        self.object_renderer = ObjectRenderer(self)
+        self.player.set_weapon(Pistol(self))
+        self.object_renderer: ObjectRenderer = ObjectRenderer(self)
         # self.objects_manager: ObjectsManager = ObjectsManager(self, enemies=[Enemy(self, 15, 6, 1, 100, 10, 0.3, "enemies/zombieman", 200, (14.5, 13.5), 0.7, 0.25)])
         self.objects_manager: ObjectsManager = ObjectsManager(self)
         self.level: Level = Level("DOOM/resources/map_data/e1m1", self)
@@ -55,11 +56,13 @@ class Game:
 
         self.raycast.update()
         self.objects_manager.update()
+        self.hud_renderer.update()
         self.player.update()
     
     def __draw(self) -> None:
         self.object_renderer.draw()
         self.player.weapon.draw()
+        self.hud_renderer.draw()
 
     def __events(self) -> None:
         for event in pg.event.get():
