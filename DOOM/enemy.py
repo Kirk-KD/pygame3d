@@ -1,3 +1,5 @@
+import random
+import pygame as pg
 from collections import deque
 import math
 
@@ -7,7 +9,7 @@ from renderer.sprite_object import AnimatedSpriteObject
 
 class Enemy(AnimatedSpriteObject):
     def __init__(self, game, detection_distance: float, attack_distance: float, speed: float, health: int, damage: int, accuracy: float,  
-                 base_path: str, anim_time: float, position: tuple[float, float], scale: float = 1, shift: float = 0) -> None:
+                 base_path: str, attack_frame_index: int, anim_time: float, position: tuple[float, float], scale: float = 1, shift: float = 0) -> None:
         super().__init__(game, base_path + "/idle", anim_time, position, scale, shift)
 
         self.detection_distance: float = detection_distance
@@ -31,6 +33,8 @@ class Enemy(AnimatedSpriteObject):
         self.attack_anim: deque = self.get_images("DOOM/resources/textures/sprites/" + base_path + "/attack")
         self.pain_anim: deque = self.get_images("DOOM/resources/textures/sprites/" + base_path + "/pain")
         self.death_anim: deque = self.get_images("DOOM/resources/textures/sprites/" + base_path + "/death")
+
+        self.attack_frame: pg.Surface = self.attack_anim[attack_frame_index]
 
         self.frame_counter: int = 0
 
@@ -107,6 +111,9 @@ class Enemy(AnimatedSpriteObject):
         self.animate(self.attack_anim)
         if self.anim_trigger:
             self.attack = False
+            if self.image == self.attack_frame:
+                if random.random() <= self.accuracy:
+                    self.player.take_damage(self.damage)
     
     def animate_walk(self) -> None:
         self.animate(self.walk_anim)
@@ -227,8 +234,9 @@ class Zombieman(Enemy):
                          speed=0.03,
                          health=100,
                          damage=10,
-                         accuracy=0.3,
+                         accuracy=0.25,
                          base_path="enemies/zombieman",
+                         attack_frame_index=1,
                          anim_time=200,
                          position=position,
                          scale=0.7,

@@ -52,4 +52,4 @@ class Shotgun(Weapon):
 
 class Pistol(Weapon):
     def __init__(self, game) -> None:
-        super().__init__(game, 30, "weapons/pistol", 90, 3, game.audio_manager.pistol)
+        super().__init__(game, 35, "weapons/pistol", 90, 3, game.audio_manager.pistol)

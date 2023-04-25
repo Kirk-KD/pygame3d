@@ -28,6 +28,18 @@ class Player:
     def set_weapon(self, weapon: Weapon) -> None:
         self.weapon = weapon
     
+    def take_damage(self, amount: int) -> None:
+        self.health -= amount
+        if self.health <= 0:
+            self.health = 0
+            self.death()
+            return
+        
+        print("DAMAGE")
+    
+    def death(self) -> None:
+        ...
+    
     def movement(self) -> None:
         sin_a = math.sin(self.angle)
         cos_a = math.cos(self.angle)
