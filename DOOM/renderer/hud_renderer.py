@@ -46,7 +46,9 @@ class HUDRenderer:
         self.update_face_position()
         self.face_frames: int = 0
 
-        self.health_position: tuple[int, int] = 220, WIN_HEIGHT - 100
+        self.health_position: tuple[int, int] = 282, WIN_HEIGHT - 75
+        self.ammo_position: tuple[int, int] = 85, WIN_HEIGHT - 75
+        self.armor_position: tuple[int, int] = 772, WIN_HEIGHT - 75
 
     def update(self) -> None:
         self.face_frames += 1
@@ -57,8 +59,15 @@ class HUDRenderer:
     def draw(self) -> None:
         self.game.surface.blit(self.main, (0, WIN_HEIGHT - self.main.get_height()))
         self.game.surface.blit(self.face, self.face_position)
-        print(self.game.player.health)
-        self.game.surface.blit(self.hud_text.string_to_surface(str(self.game.player.health) + "%", scale=2.7), self.health_position)
+
+        health_surf = self.hud_text.string_to_surface(str(self.game.player.health) + "%", scale=2.7)
+        self.game.surface.blit(health_surf, self.centered(health_surf, self.health_position))
+
+        ammo_surf = self.hud_text.string_to_surface(str(self.game.player.weapon.ammo), scale=2.7)
+        self.game.surface.blit(ammo_surf, self.centered(ammo_surf, self.ammo_position))
+
+        armor_surf = self.hud_text.string_to_surface(str(self.game.player.armor) + "%", scale=2.7)
+        self.game.surface.blit(armor_surf, self.centered(armor_surf, self.armor_position))
     
     def update_face_position(self) -> None:
         self.face_position = WIN_HALF_WIDTH - self.face.get_width() // 2 + 1, WIN_HEIGHT - self.main.get_height() // 2 - self.face.get_height() // 2 + 1
@@ -102,3 +111,7 @@ class HUDRenderer:
         ratio = WIN_WIDTH / width
         new_height = height * ratio
         return pg.transform.scale(surf, (WIN_WIDTH, new_height))
+    
+    def centered(self, surf: pg.Surface, center: tuple[int, int]) -> tuple[int, int]:
+        x, y = center
+        return x - surf.get_width() // 2, y - surf.get_height() // 2

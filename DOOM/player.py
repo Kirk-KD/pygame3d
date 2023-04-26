@@ -3,6 +3,7 @@ import pygame as pg
 
 from config import *
 from weapon import *
+from inventory import Inventory
 
 
 class Player:
@@ -13,15 +14,19 @@ class Player:
         self.diag_move_corr = 1 / math.sqrt(2)
         self.mouse_rel: float = 0
 
+        self.inventory: Inventory = Inventory(self.game)
+
         self.weapon: Weapon = None  # avoid circular initialization by setting this later
         self.weapon_shot: bool = False
 
         self.health: int = 100
+        self.armor: int = 0
     
     def single_weapon_fire(self, event: pg.event.Event) -> None:
         if event.type == pg.MOUSEBUTTONDOWN:
-            if event.button == 1 and not self.weapon_shot and not self.weapon.reloading:
+            if event.button == 1 and not self.weapon_shot and not self.weapon.reloading and self.weapon.ammo > 0:
                 self.weapon.play_sound()
+                self.weapon.ammo -= 1
                 self.weapon_shot = True
                 self.weapon.reloading = True
 
@@ -34,8 +39,6 @@ class Player:
             self.health = 0
             self.death()
             return
-        
-        print("DAMAGE")
     
     def death(self) -> None:
         ...

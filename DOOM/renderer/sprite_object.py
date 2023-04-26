@@ -8,7 +8,6 @@ from config import *
 class SpriteObject:
     def __init__(self, game, image_name: str, position: tuple[float, float] = (0, 0), scale: float = 1, shift: float = 0) -> None:
         self.game = game
-        self.player = self.game.player
         self.x, self.y = position
         self.image: pg.Surface = pg.image.load("DOOM/resources/textures/sprites/" + image_name + ".png").convert_alpha()
         self.image_width, self.image_height = self.image.get_size()
@@ -38,13 +37,13 @@ class SpriteObject:
         self.game.raycast.objs_to_render.append((self.norm_dist, image, pos))
     
     def get_sprite(self):
-        dx = self.x - self.player.x
-        dy = self.y - self.player.y
+        dx = self.x - self.game.player.x
+        dy = self.y - self.game.player.y
         self.dx, self.dy = dx, dy
         self.theta = math.atan2(dy, dx)
 
-        delta = self.theta - self.player.angle
-        if (dx > 0 and self.player.angle > math.pi) or (dx < 0 and dy < 0):
+        delta = self.theta - self.game.player.angle
+        if (dx > 0 and self.game.player.angle > math.pi) or (dx < 0 and dy < 0):
             delta += math.tau
         
         delta_rays = delta / DELTA_ANGLE

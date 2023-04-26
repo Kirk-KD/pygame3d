@@ -113,7 +113,7 @@ class Enemy(AnimatedSpriteObject):
             self.attack = False
             if self.image == self.attack_frame:
                 if random.random() <= self.accuracy:
-                    self.player.take_damage(self.damage)
+                    self.game.player.take_damage(self.damage)
     
     def animate_walk(self) -> None:
         self.animate(self.walk_anim)
@@ -156,8 +156,8 @@ class Enemy(AnimatedSpriteObject):
         wall_d_vert, wall_d_hor = 0, 0
         player_d_vert, player_d_hor = 0, 0
 
-        ox, oy = self.player.position
-        x_grid, y_grid = self.player.grid_position
+        ox, oy = self.game.player.position
+        x_grid, y_grid = self.game.player.grid_position
 
         ray_angle = self.theta
         sin_a = math.sin(ray_angle)

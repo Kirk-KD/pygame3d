@@ -6,7 +6,7 @@ from config import *
 
 
 class Weapon(AnimatedSpriteObject):
-    def __init__(self, game, damage: int, sprite_sheet_dir: str, frame_time: float, scale: float, sound: pg.mixer.Sound) -> None:
+    def __init__(self, game, damage: int, max_ammo: int, init_ammo: int, sprite_sheet_dir: str, frame_time: float, scale: float, sound: pg.mixer.Sound) -> None:
         super().__init__(game, sprite_sheet_dir, animation_time=frame_time, scale=scale)
         self.images = deque([pg.transform.scale(img, (img.get_width() * self.sprite_scale, img.get_height() * self.sprite_scale))
                              for img in self.images])
@@ -14,6 +14,8 @@ class Weapon(AnimatedSpriteObject):
 
         self.reloading: bool = False
         self.damage: int = damage
+        self.max_ammo: int = max_ammo
+        self.ammo: int = init_ammo
         self.num_images: int = len(self.images)
         self.frame_counter: int = 0
 
@@ -21,7 +23,7 @@ class Weapon(AnimatedSpriteObject):
     
     def animate_shot(self) -> None:
         if self.reloading:
-            self.player.weapon_shot = False
+            self.game.player.weapon_shot = False
             if self.anim_trigger:
                 self.images.rotate(-1)
                 self.image = self.images[0]
@@ -45,11 +47,25 @@ class Weapon(AnimatedSpriteObject):
         self.animate_shot()
 
 
-class Shotgun(Weapon):
-    def __init__(self, game) -> None:
-        super().__init__(game, 50, "weapons/shotgun", 100, 3, game.audio_manager.shotgun)
-
-
 class Pistol(Weapon):
     def __init__(self, game) -> None:
-        super().__init__(game, 35, "weapons/pistol", 90, 3, game.audio_manager.pistol)
+        super().__init__(game,
+                         damage=35,
+                         max_ammo=200,
+                         init_ammo=50,
+                         sprite_sheet_dir="weapons/pistol",
+                         frame_time=90,
+                         scale=3,
+                         sound=game.audio_manager.pistol)
+
+
+class Shotgun(Weapon):
+    def __init__(self, game) -> None:
+        super().__init__(game,
+                         damage=50,
+                         max_ammo=50,
+                         init_ammo=8,
+                         sprite_sheet_dir="weapons/shotgun",
+                         frame_time=100,
+                         scale=3,
+                         sound=game.audio_manager.shotgun)
