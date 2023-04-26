@@ -1,3 +1,15 @@
+"""Module for the game's player character.
+
+This module contains the Player class, which represents the player character in the game.
+The player can move around the game world, aim and shoot weapons, and take damage.
+
+Attributes:
+    None
+
+Classes:
+    `Player`: Represents the player character in the game.
+"""
+
 import math
 import pygame as pg
 
@@ -7,6 +19,22 @@ from inventory import Inventory
 
 
 class Player:
+    """A class representing the player character in the game.
+
+    Attributes:
+        `game` (`Game`): The game instance this player belongs to.
+        `angle` (`float`): The current angle the player is facing.
+        `x` (`float`): The current x coordinate of the player in the game world.
+        `y` (`float`): The current y coordinate of the player in the game world.
+        `diag_move_corr` (`float`): Correction factor for diagonal movement.
+        `mouse_rel` (`float`): The relative movement of the mouse.
+        `inventory` (`Inventory`): The player's inventory instance.
+        `weapon` (`Weapon`): The current weapon the player is holding.
+        `weapon_shot` (`bool`): Flag indicating whether a shot has been fired.
+        `health` (`int`): The current health points of the player.
+        `armor` (`int`): The current armor points of the player.
+    """
+
     def __init__(self, game) -> None:
         self.game = game
         self.angle: float = 0
@@ -23,71 +51,117 @@ class Player:
         self.armor: int = 0
     
     def single_weapon_fire(self, event: pg.event.Event) -> None:
+        """
+        Fire the player's weapon once if the left mouse button is pressed, and the weapon is ready to fire.
+        Decreases the weapon's ammo count by one and plays the weapon's firing sound.
+        
+        Args:
+            event (pygame.event.Event): A pygame event object containing the event type and button pressed.
+        
+        Returns:
+            None
+        """
+
+        # Check if the mouse button is pressed down, and if it is the left button and the player is not currently shooting or reloading.
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1 and not self.weapon_shot and not self.weapon.reloading and self.weapon.ammo > 0:
+                # If these conditions are met, play the weapon sound, decrease the ammo count, and set the weapon_shot and reloading flags to True.
                 self.weapon.play_sound()
                 self.weapon.ammo -= 1
                 self.weapon_shot = True
                 self.weapon.reloading = True
 
     def set_weapon(self, weapon: Weapon) -> None:
+        """This function literally just sets the weapon."""
+
+        # Set the weapon to be the weapon. The weapon is now the weapon. This comment is as useless as this function.
         self.weapon = weapon
     
     def take_damage(self, amount: int) -> None:
+        """Make the player suffer and take damage."""
+
+        # take damage
         self.health -= amount
+        # if health below 0 (die)
         if self.health <= 0:
+            # set to 0
             self.health = 0
+            # kill the player :D
             self.death()
-            return
     
     def death(self) -> None:
-        ...
+        """Die."""
+
+        ...  # TODO
     
     def movement(self) -> None:
+        """Handles the movement."""
+
+        # calculates the angles
         sin_a = math.sin(self.angle)
         cos_a = math.cos(self.angle)
+
+        # delta x and y
         dx, dy = 0, 0
+
+        # multiply the speed by deltatime
         speed = PLAYER_MOVE_SPEED * self.game.deltatime
 
+        # get all keys pressed
         keys = pg.key.get_pressed()
         num_key_pressed = -1
 
+        # sprint
         if keys[pg.K_LSHIFT]:
             speed *= 1.65
         
+        # calculate the player position in the next frame with trigonometry
         speed_sin = speed * sin_a
         speed_cos = speed * cos_a
 
+        # W
         if keys[pg.K_w]:
             num_key_pressed += 1
             dx += speed_cos
             dy += speed_sin
+        # S
         if keys[pg.K_s]:
             num_key_pressed += 1
             dx += -speed_cos
             dy += -speed_sin
+        # A
         if keys[pg.K_a]:
             num_key_pressed += 1
             dx += speed_sin
             dy += -speed_cos
+        # D
         if keys[pg.K_d]:
             num_key_pressed += 1
             dx += -speed_sin
             dy += speed_cos
 
-        # diag move correction
+        # diagnal move speed correction
         if num_key_pressed:
             dx *= self.diag_move_corr
             dy *= self.diag_move_corr
 
+        # check collision (its literally in the method name)
         self.check_collision(dx, dy)
 
+        # set the angle back in range
         self.angle %= math.tau
 
     def check_collision(self, dx: float, dy: float) -> None:
+        """Check collision."""
+
+        # restore player size from the deltatime
         scale = PLAYER_SIZE_SCALE / self.game.deltatime
+
+        # if player's x is unoccupied, move
         if self.game.level.map.unoccupied(int(self.x + dx * scale), int(self.y)):
             self.x += dx
+        
+        # if the player's y is unoccupied, move
         if self.game.level.map.unoccupied(int(self.x), int(self.y + dy * scale)):
             self.y += dy
 
