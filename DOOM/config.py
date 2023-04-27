@@ -32,3 +32,5 @@ GRID_SIZE: float = 1
 
 TEX_SIZE: int = 256
 HALF_TEX_SIZE: int = TEX_SIZE // 2
+
+PICKUP_DISTANCE: float = 0.9

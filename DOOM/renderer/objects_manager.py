@@ -1,5 +1,6 @@
 from enemy import Enemy
 from renderer.sprite_object import SpriteObject, AnimatedSpriteObject
+from pickup import Pickup
 
 
 class ObjectInfo:
@@ -26,11 +27,12 @@ OBJECTS = {
 
 
 class ObjectsManager:
-    def __init__(self, game, objects: list[SpriteObject] = [], enemies: list[SpriteObject] = []) -> None:
+    def __init__(self, game, objects: list[SpriteObject] = [], enemies: list[SpriteObject] = [], pickups: list[Pickup] = []) -> None:
         self.game = game
 
         self.objects: list[SpriteObject] = objects
         self.enemies: list[Enemy] = enemies
+        self.pickups: list[Pickup] = pickups
 
     def add_sprite(self, sprite: SpriteObject) -> None:
         self.objects.append(sprite)
@@ -38,9 +40,18 @@ class ObjectsManager:
     def add_enemy(self, enemy: Enemy) -> None:
         self.enemies.append(enemy)
     
+    def add_pickup(self, pickup: Pickup) -> None:
+        self.pickups.append(pickup)
+    
     def update(self) -> None:
         for obj in self.objects:
             obj.update()
 
         for enemy in self.enemies:
             enemy.update()
+        
+        for pickup in self.pickups:
+            if pickup.deleted:
+                continue
+
+            pickup.update()

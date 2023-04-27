@@ -57,6 +57,10 @@ class SpriteObject:
     def update(self) -> None:
         self.get_sprite()
 
+    @property
+    def position(self) -> tuple[float, float]:
+        return self.x, self.y
+
 
 class AnimatedSpriteObject(SpriteObject):
     def __init__(self, game, sprite_sheet_dir: str, animation_time: float, position: tuple[float, float] = (0, 0), scale: float = 1, shift: float = 0) -> None:

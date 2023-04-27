@@ -10,3 +10,6 @@ class Inventory:
         self.key_red: bool = False
         self.key_yellow: bool = False
         self.key_blue: bool = False
+    
+    def add_weapon(self, weapon: Weapon):
+        self.weapons.append(weapon)

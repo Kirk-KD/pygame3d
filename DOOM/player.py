@@ -77,6 +77,15 @@ class Player:
         # Set the weapon to be the weapon. The weapon is now the weapon. This comment is as useless as this function.
         self.weapon = weapon
     
+    def give_weapon(self, weapon: Weapon) -> None:
+        self.set_weapon(weapon)
+
+        for w in self.inventory.weapons:
+            if w.__class__ == weapon.__class__:
+                return
+
+        self.inventory.add_weapon(weapon)
+    
     def take_damage(self, amount: int) -> None:
         """Make the player suffer and take damage."""
 

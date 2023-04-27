@@ -21,6 +21,7 @@ from player import Player
 from level import Level
 from audio import AudioManager
 from weapon import *
+from pickup import ShotgunPickup
 
 
 class Game:
@@ -103,7 +104,7 @@ class Game:
         self.object_renderer: ObjectRenderer = ObjectRenderer(self)
 
         # create the objects manager
-        self.objects_manager: ObjectsManager = ObjectsManager(self)
+        self.objects_manager: ObjectsManager = ObjectsManager(self, pickups=[ShotgunPickup(self, (1.5, 15.5))])
 
         # load level
         self.level: Level = Level("DOOM/resources/map_data/e1m1", self)
@@ -144,20 +145,6 @@ class Game:
     def __draw(self) -> None:
         """Calls the draw function of everything that should be drawn."""
 
-        # Draw stuff. (This comment is the most useless piece of comment that the human species have ever 
-        # created as most of the code can be read in plain english and needs no explaination in the first 
-        # place. This comment serves no purpose in terms of explaination or summarization, and is simply 
-        # a waste of viewing space to the programmer, and a waste of bytes for the file system on the 
-        # operating system that so unfortunately has to endure the existance of such a failure of a 
-        # comment. In fact, this comment is so pointless that the creator of this program has so horribly
-        # lost interest in writing good comments that he is dedicating his class time to write 
-        # this monstrosity of a comment. At the very least, the creator has put in effort in spliting this 
-        # originally one-line comment into a multi-line one. In fact, the original plan for this class is 
-        # to finish the HUD display in `renderer/hud_renderer.py`, but the creator has taken a deep interest 
-        # and pride in writing this pointless comment to be as long as his english writing ability and his 
-        # fingers allow him. Possibly the creator will extend this useless comment in the future when he
-        # comes across this file when coding, or when he is bored out of his mind writing useless comments
-        # else where, and come back here for the company of the most pointless comment in history.)
         self.object_renderer.draw()
         self.player.weapon.draw()
         self.hud_renderer.draw()
