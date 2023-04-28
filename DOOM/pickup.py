@@ -1,7 +1,7 @@
 import math
 
 from renderer.sprite_object import SpriteObject
-from weapon import Shotgun
+from weapon import Pistol, Shotgun
 from config import PICKUP_DISTANCE
 
 
@@ -19,7 +19,7 @@ class Pickup(SpriteObject):
         super().__init__(game, image_path, position, scale, shift)
 
         self.item_name: str = item_name
-        self.pick_up_message: str = f"You picked up a {self.item_name}."
+        self.pick_up_message: str = f"You picked up {self.item_name}."
 
         self.deleted: bool = False
     
@@ -41,8 +41,19 @@ class Pickup(SpriteObject):
 
 class ShotgunPickup(Pickup):
     def __init__(self, game, position: tuple[float, float]) -> None:
-        super().__init__(game, item_name="Shotgun", image_path="pickup/shotgun", position=position, scale=0.16, shift=3)
+        super().__init__(game, item_name="the Shotgun", image_path="pickup/shotgun", position=position, scale=0.16, shift=3)
     
     def pick_up(self) -> None:
         self.game.player.give_weapon(Shotgun(self.game))
         print(self.pick_up_message)
+
+
+class ClipPickup(Pickup):
+    def __init__(self, game, position: tuple[float, float]) -> None:
+        super().__init__(game, item_name="a Clip", image_path="pickup/clip", position=position, scale=0.14, shift=3.3)
+    
+    def pick_up(self) -> None:
+        pistol = self.game.player.inventory.get_by_type(Pistol)
+        if not pistol.ammo_full():
+            pistol.add_ammo(15)
+            print(self.pick_up_message)

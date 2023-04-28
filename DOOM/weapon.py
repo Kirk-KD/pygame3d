@@ -45,6 +45,12 @@ class Weapon(AnimatedSpriteObject):
     def update(self) -> None:
         self.check_anim_time()
         self.animate_shot()
+    
+    def ammo_full(self) -> bool:
+        return self.ammo == self.max_ammo
+    
+    def add_ammo(self, amount: int) -> None:
+        self.ammo = min(self.ammo + amount, self.max_ammo)
 
 
 class Pistol(Weapon):

@@ -21,7 +21,7 @@ from player import Player
 from level import Level
 from audio import AudioManager
 from weapon import *
-from pickup import ShotgunPickup
+from pickup import ShotgunPickup, ClipPickup
 
 
 class Game:
@@ -104,7 +104,7 @@ class Game:
         self.object_renderer: ObjectRenderer = ObjectRenderer(self)
 
         # create the objects manager
-        self.objects_manager: ObjectsManager = ObjectsManager(self, pickups=[ShotgunPickup(self, (1.5, 15.5))])
+        self.objects_manager: ObjectsManager = ObjectsManager(self, pickups=[ShotgunPickup(self, (1.5, 15.5)), ClipPickup(self, (2.5, 15.5))])
 
         # load level
         self.level: Level = Level("DOOM/resources/map_data/e1m1", self)
@@ -161,9 +161,6 @@ class Game:
 
             # shoot
             self.player.single_weapon_fire(event)
-
-            # switch weapon
-            self.player.switch_weapon(event)
 
     def run(self) -> None:
         """
