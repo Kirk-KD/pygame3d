@@ -70,6 +70,29 @@ class Player:
                 self.weapon.ammo -= 1
                 self.weapon_shot = True
                 self.weapon.reloading = True
+    
+    def switch_weapon(self, event: pg.event.Event) -> None:
+        """Check keyboard inputs to switch weapon."""
+
+        if event.type == pg.KEYDOWN:
+            key = event.key
+            if key == pg.K_2:
+                weapon = 0
+            elif key == pg.K_3:
+                weapon = 1
+            elif key == pg.K_4:
+                weapon = 2
+            elif key == pg.K_5:
+                weapon = 3
+            elif key == pg.K_6:
+                weapon = 4
+            elif key == pg.K_7:
+                weapon = 5
+            else:
+                weapon = -1
+            
+            if weapon != -1 and self.inventory.has_weapon_at(weapon):
+                self.set_weapon(self.inventory.weapons[weapon])
 
     def set_weapon(self, weapon: Weapon) -> None:
         """This function literally just sets the weapon."""

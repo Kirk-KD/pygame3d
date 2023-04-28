@@ -46,6 +46,24 @@ class HUDRenderer:
         self.update_face_position()
         self.face_frames: int = 0
 
+        scale = 3.5
+        self.grey_numbers = [
+            self.load("weapon_numbers/grey_2", scale=scale),
+            self.load("weapon_numbers/grey_3", scale=scale),
+            self.load("weapon_numbers/grey_4", scale=scale),
+            self.load("weapon_numbers/grey_5", scale=scale),
+            self.load("weapon_numbers/grey_6", scale=scale),
+            self.load("weapon_numbers/grey_7", scale=scale)
+        ]
+        self.yellow_numbers = [
+            self.load("weapon_numbers/yellow_2", scale=scale),
+            self.load("weapon_numbers/yellow_3", scale=scale),
+            self.load("weapon_numbers/yellow_4", scale=scale),
+            self.load("weapon_numbers/yellow_5", scale=scale),
+            self.load("weapon_numbers/yellow_6", scale=scale),
+            self.load("weapon_numbers/yellow_7", scale=scale)
+        ]
+
         self.health_position: tuple[int, int] = 282, WIN_HEIGHT - 75
         self.ammo_position: tuple[int, int] = 85, WIN_HEIGHT - 75
         self.armor_position: tuple[int, int] = 772, WIN_HEIGHT - 75
@@ -68,6 +86,22 @@ class HUDRenderer:
 
         armor_surf = self.hud_text.string_to_surface(str(self.game.player.armor) + "%", scale=2.7)
         self.game.surface.blit(armor_surf, self.centered(armor_surf, self.armor_position))
+
+        self.draw_weapon_numbers()
+    
+    def draw_weapon_numbers(self) -> None:
+        top_left = 415, WIN_HEIGHT - 105
+        x_diff = 45
+        y_diff = 37
+
+        x, y = top_left
+        for i in range(6):
+            self.game.surface.blit((self.yellow_numbers if self.game.player.inventory.has_weapon_at(i) else self.grey_numbers)[i], (x, y))
+
+            x += x_diff
+            if i == 2:
+                y += y_diff
+                x = top_left[0]
     
     def update_face_position(self) -> None:
         self.face_position = WIN_HALF_WIDTH - self.face.get_width() // 2 + 1, WIN_HEIGHT - self.main.get_height() // 2 - self.face.get_height() // 2 + 1
@@ -97,8 +131,11 @@ class HUDRenderer:
         self.face_01: list[pg.Surface] = self.load_faces("01")
         self.face_death: list[pg.Surface] = self.load_faces("0")
     
-    def load(self, path: str) -> pg.Surface:
-        return pg.image.load("DOOM/resources/textures/hud/" + path + ".png")
+    def load(self, path: str, scale: float = 1) -> pg.Surface:
+        img = pg.image.load("DOOM/resources/textures/hud/" + path + ".png")
+        if scale == 1:
+            return img
+        return pg.transform.scale(img, (img.get_width() * scale, img.get_height() * scale))
     
     def load_faces(self, health: str) -> list[pg.Surface]:
         face_ratio = 3.3

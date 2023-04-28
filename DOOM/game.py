@@ -162,6 +162,9 @@ class Game:
             # shoot
             self.player.single_weapon_fire(event)
 
+            # switch weapon
+            self.player.switch_weapon(event)
+
     def run(self) -> None:
         """
         Starts the game loop.
