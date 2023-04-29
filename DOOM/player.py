@@ -93,27 +93,11 @@ class Player:
         if weapon != -1 and self.inventory.has_weapon_at(weapon):
             self.set_weapon(self.inventory.weapons[weapon])
 
-        # if event.type == pg.KEYDOWN:
-        #     key = event.key
-        #     if key == pg.K_2 or key == pg.K_AT:
-        #         weapon = 0
-        #     elif key == pg.K_3 or key == pg.K_HASH:
-        #         weapon = 1
-        #     elif key == pg.K_4 or key == pg.K_DOLLAR:
-        #         weapon = 2
-        #     elif key == pg.K_5 or key == pg.K_PERCENT:
-        #         weapon = 3
-        #     elif key == pg.K_6 or key == pg.K_CARET:
-        #         weapon = 4
-        #     elif key == pg.K_7 or key == pg.K_AMPERSAND:
-        #         weapon = 5
-        #     else:
-        #         weapon = -1
-            
-        
-
     def set_weapon(self, weapon: Weapon) -> None:
         """This function literally just sets the weapon."""
+
+        if type(weapon) == type(self.weapon):
+            return
 
         # Set the weapon to be the weapon. The weapon is now the weapon. This comment is as useless as this function.
         self.weapon = weapon

@@ -7,31 +7,36 @@ from config import WIN_WIDTH, WIN_HEIGHT, WIN_HALF_WIDTH
 
 class HUDText:
     def __init__(self) -> None:
-        self.lookup: dict[str, pg.Surface] = self.load_textures()
+        self.big_lookup: dict[str, pg.Surface] = self.load_textures("big")
+        self.small_lookup: dict[str, pg.Surface] = self.load_textures("small")
     
-    def string_to_surface(self, s: str, scale: float = 1) -> pg.Surface:
+    def string_to_surface(self, s: str, lookup_name: str, scale: float = 1, margin: float = 0) -> pg.Surface:
         surfaces = []
-        for char in s:
-            surf = self.lookup[char]
+        for char in s.lower():
+            if char == ".":
+                char = "dot"
+            elif char == " ":
+                char = "space"
+            surf = getattr(self, lookup_name + "_lookup")[char]
             surfaces.append(surf)
-        width = sum([surface.get_width() for surface in surfaces])
+        width = sum([surface.get_width() + margin for surface in surfaces])
         new_surface = pg.Surface((width, surfaces[0].get_height()), pg.SRCALPHA, 32).convert_alpha()
         x = 0
         for surface in surfaces:
             new_surface.blit(surface, (x, 0))
-            x += surface.get_width()
+            x += surface.get_width() + margin
         
         return pg.transform.scale(new_surface, (new_surface.get_width() * scale, new_surface.get_height() * scale))
     
-    def load_textures(self) -> dict[str, pg.Surface]:
+    def load_textures(self, size_name: str) -> dict[str, pg.Surface]:
         res = {}
-        for filename in os.listdir("DOOM/resources/textures/hud/text/"):
+        for filename in os.listdir(f"DOOM/resources/textures/hud/text/{size_name}"):
             name = filename.split(".")[0]
-            res[name] = self.load(name)
+            res[name] = self.load(name, size_name)
         return res
 
-    def load(self, name: str) -> pg.Surface:
-        return pg.image.load("DOOM/resources/textures/hud/text/" + name + ".png")
+    def load(self, name: str, size_name: str) -> pg.Surface:
+        return pg.image.load(f"DOOM/resources/textures/hud/text/{size_name}/" + name + ".png")
 
 
 class HUDRenderer:
@@ -64,30 +69,52 @@ class HUDRenderer:
             self.load("weapon_numbers/yellow_7", scale=scale)
         ]
 
+        self.console_text: str = None
+        self.console_frames: int = 0
+        self.console_max_frames: int = 0
+
         self.health_position: tuple[int, int] = 282, WIN_HEIGHT - 75
         self.ammo_position: tuple[int, int] = 85, WIN_HEIGHT - 75
         self.armor_position: tuple[int, int] = 772, WIN_HEIGHT - 75
+        self.console_position: tuple[int, int] = 10, 10
 
     def update(self) -> None:
         self.face_frames += 1
         if self.face_frames >= 30:
             self.face_frames = 0
             self.face = random.choice(self.get_faces())
+        
+        if self.console_text:
+            self.console_frames += 1
+            if self.console_frames >= self.console_max_frames:
+                self.console_text = None
+                self.console_frames = 0
+                self.console_max_frames = 0
+    
+    def console(self, text: str, frames: int) -> None:
+        self.console_text = text
+        self.console_max_frames = frames
 
     def draw(self) -> None:
         self.game.surface.blit(self.main, (0, WIN_HEIGHT - self.main.get_height()))
         self.game.surface.blit(self.face, self.face_position)
 
-        health_surf = self.hud_text.string_to_surface(str(self.game.player.health) + "%", scale=2.7)
+        health_surf = self.hud_text.string_to_surface(str(self.game.player.health) + "%", "big", scale=2.7)
         self.game.surface.blit(health_surf, self.centered(health_surf, self.health_position))
 
-        ammo_surf = self.hud_text.string_to_surface(str(self.game.player.weapon.ammo), scale=2.7)
+        ammo_surf = self.hud_text.string_to_surface(str(self.game.player.weapon.ammo), "big", scale=2.7)
         self.game.surface.blit(ammo_surf, self.centered(ammo_surf, self.ammo_position))
 
-        armor_surf = self.hud_text.string_to_surface(str(self.game.player.armor) + "%", scale=2.7)
+        armor_surf = self.hud_text.string_to_surface(str(self.game.player.armor) + "%", "big", scale=2.7)
         self.game.surface.blit(armor_surf, self.centered(armor_surf, self.armor_position))
 
+        self.draw_console_text()
         self.draw_weapon_numbers()
+    
+    def draw_console_text(self) -> None:
+        if self.console_text:
+            console_surf = self.hud_text.string_to_surface(self.console_text, "small", scale=3, margin=0)
+            self.game.surface.blit(console_surf, self.console_position)
     
     def draw_weapon_numbers(self) -> None:
         top_left = 415, WIN_HEIGHT - 105
