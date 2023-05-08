@@ -23,12 +23,15 @@ from png_map import PNGMap
 from renderer.sprite_object import SpriteObject
 from renderer.objects_manager import OBJECTS
 from enemy import ENEMIES
+from pickup import PICKUPS
 
 # define keywords
 OBJECT = "object "
 OBJECT_END = "object end"
 ENEMY = "enemy "
 ENEMY_END = "enemy end"
+PICKUP = "pickup "
+PICKUP_END = "pickup end"
 SKY = "sky "
 PLAYER = "player "
 
@@ -79,12 +82,13 @@ class Level:
 
         object_name = None
         enemy_name = None
+        pickup_name = None
         sky_name = None
         player_pos = None
 
         # go through all lines of the file
         for lineno, line in enumerate(lines):
-            print("Read:", line)
+            print("Read ln", lineno + 1, "\t:", line)
 
             # ignore empty or comment (#) lines
             if len(line) == 0 or line.startswith("#"):
@@ -104,7 +108,21 @@ class Level:
                 if object_name not in OBJECTS:
                     raise Exception(f"No object named '{object_name}' found!")
                 continue
-                
+
+            # user is ending a pickup definition
+            if line == PICKUP_END:
+                if pickup_name is None:
+                    raise Exception("No pickup def to end")
+
+                pickup_name = None
+                continue
+
+            if line.startswith(PICKUP):
+                pickup_name = line[len(PICKUP):]
+                if pickup_name not in PICKUPS:
+                    raise Exception(f"No pickup named '{pickup_name}'")
+                continue
+
             # object is setting player position and rotation
             if line.startswith(PLAYER):
                 if player_pos is not None:
@@ -149,6 +167,13 @@ class Level:
                 enemy_x, enemy_y = line.strip().split()
                 enemy_x, enemy_y = float(enemy_x), float(enemy_y)
                 self.objects_manager.add_enemy(ENEMIES[enemy_name](self.game, (enemy_x, enemy_y)))
+                continue
+
+            # during a pickup def
+            if pickup_name:
+                pu_x, pu_y = line.strip().split()
+                pu_x, pu_y = float(pu_x), float(pu_y)
+                self.objects_manager.add_pickup(PICKUPS[pickup_name](self.game, (pu_x, pu_y)))
                 continue
         
         self.map.load(self.png_map.to_map())

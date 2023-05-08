@@ -104,7 +104,7 @@ class Game:
         self.object_renderer: ObjectRenderer = ObjectRenderer(self)
 
         # create the objects manager
-        self.objects_manager: ObjectsManager = ObjectsManager(self, pickups=[ShotgunPickup(self, (1.5, 15.5)), ShellsPickup(self, (2.5, 15.5))])
+        self.objects_manager: ObjectsManager = ObjectsManager(self)
 
         # load level
         self.level: Level = Level("DOOM/resources/map_data/e1m1", self)

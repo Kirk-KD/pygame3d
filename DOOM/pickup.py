@@ -83,3 +83,10 @@ class ShellsPickup(Pickup):
             shotgun.add_ammo(4)
             return True
         return False
+
+
+PICKUPS = {
+    "shotgun": ShotgunPickup,
+    "clip": ClipPickup,
+    "shells": ShellsPickup
+}
