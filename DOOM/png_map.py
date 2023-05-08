@@ -1,4 +1,5 @@
 from PIL import Image
+from typing import Tuple
 
 RGB_TO_TEX = {
     (0, 0, 0): "STARTAN3",
@@ -13,8 +14,8 @@ RGB_TO_TEX = {
 
 class PNGMap:
     def __init__(self, path: str) -> None:
-        self.path = path
-        self.image = Image.open(self.path)
+        self.path: str = path
+        self.image: Image = Image.open(self.path)
         self.pixels = self.image.load()
 
     def to_map(self) -> None:
@@ -32,5 +33,5 @@ class PNGMap:
         # print("\n".join(["".join(row) for row in map]))
         return map
     
-    def get(self, x: int, y: int) -> tuple[int, int, int]:
+    def get(self, x: int, y: int) -> Tuple[int, int, int]:
         return self.pixels[x, y]

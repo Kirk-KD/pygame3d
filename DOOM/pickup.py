@@ -1,3 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple
+if TYPE_CHECKING:
+    from game import Game
+
 import math
 
 from renderer.sprite_object import SpriteObject
@@ -15,7 +20,7 @@ class Pickup(SpriteObject):
         `item_name` (`str`): The display name of this Pickup, display in the game HUD.
     """
 
-    def __init__(self, game, item_name: str, image_path: str, position: tuple[float, float], scale: float = 1, shift: float = 0) -> None:
+    def __init__(self, game: Game, item_name: str, image_path: str, position: Tuple[float, float], scale: float = 1, shift: float = 0) -> None:
         super().__init__(game, image_path, position, scale, shift)
 
         self.item_name: str = item_name
@@ -48,7 +53,7 @@ class Pickup(SpriteObject):
 
 
 class ShotgunPickup(Pickup):
-    def __init__(self, game, position: tuple[float, float]) -> None:
+    def __init__(self, game: Game, position: tuple[float, float]) -> None:
         super().__init__(game, item_name="the Shotgun", image_path="pickup/shotgun", position=position, scale=0.16, shift=3)
     
     def pick_up(self) -> bool:
@@ -57,7 +62,7 @@ class ShotgunPickup(Pickup):
 
 
 class ClipPickup(Pickup):
-    def __init__(self, game, position: tuple[float, float]) -> None:
+    def __init__(self, game: Game, position: tuple[float, float]) -> None:
         super().__init__(game, item_name="a Clip", image_path="pickup/clip", position=position, scale=0.14, shift=3.3)
     
     def pick_up(self) -> bool:
@@ -69,7 +74,7 @@ class ClipPickup(Pickup):
 
 
 class ShellsPickup(Pickup):
-    def __init__(self, game, position: tuple[float, float]) -> None:
+    def __init__(self, game: Game, position: tuple[float, float]) -> None:
         super().__init__(game, item_name="4 Shotgun Shells", image_path="pickup/shells", position=position, scale=0.14, shift=3.3)
     
     def pick_up(self) -> bool:

@@ -10,3 +10,12 @@ enemy zombieman
     1.5 15.5
     17.5 8.5
 enemy end
+
+pickup shotgun
+    1.5 15.5
+pickup end
+
+pickup clip
+    2.5 15.5
+pickup end
+

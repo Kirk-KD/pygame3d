@@ -9,6 +9,11 @@ Usage:
     level = Level("path/to/level", game)  # create a new Level instance (automatically loads the level from the path.)
 """
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from game import Game
+
 # import math
 import math
 
@@ -41,7 +46,7 @@ class Level:
         `sprite_objects` (list[SpriteObject]): The list of sprite objects.
     """
 
-    def __init__(self, path: str, game) -> None:
+    def __init__(self, path: str, game: Game) -> None:
         """
         Constructs a Level object.
 
@@ -51,7 +56,7 @@ class Level:
         """
 
         self.path: str = path
-        self.game = game
+        self.game: Game = game
         self.objects_manager = game.objects_manager
 
         self.png_map: PNGMap = PNGMap(self.path + ".png")

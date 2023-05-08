@@ -1,3 +1,4 @@
+from typing import List, Tuple
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
@@ -7,14 +8,14 @@ from config import *
 
 class Map:
     def __init__(self) -> None:
-        self.map: list[list[str]] = []
+        self.map: List[List[str]] = []
         self.height: int = 0
         self.width: int = 0
 
         self.pathfind_grid: Grid = None
         self.pathfinder: AStarFinder = AStarFinder(diagonal_movement=DiagonalMovement.only_when_no_obstacle)
     
-    def load(self, map: list[list[str]]) -> None:
+    def load(self, map: List[List[str]]) -> None:
         """From the given 2D list representation of the map, load the pathfinding 2D list 
         in the format required by the pathfinding library.
 
@@ -58,7 +59,7 @@ class Map:
         
         return True
 
-    def astar_next(self, start: tuple[int, int], target: tuple[int, int]) -> tuple[int, int] or None:
+    def astar_next(self, start: Tuple[int, int], target: Tuple[int, int]) -> Tuple[int, int] or None:
         """Using the A* algorithm, find the next step to go to when pathfinding towards `target`.
 
         Args:

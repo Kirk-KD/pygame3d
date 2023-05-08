@@ -1,3 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple
+if TYPE_CHECKING:
+    from game import Game
+
 from collections import deque
 import pygame as pg
 
@@ -6,7 +11,7 @@ from config import *
 
 
 class Weapon(AnimatedSpriteObject):
-    def __init__(self, game, damage: int, max_ammo: int, init_ammo: int, sprite_sheet_dir: str, frame_time: float, scale: float, sound: pg.mixer.Sound) -> None:
+    def __init__(self, game: Game, damage: int, max_ammo: int, init_ammo: int, sprite_sheet_dir: str, frame_time: float, scale: float, sound: pg.mixer.Sound) -> None:
         super().__init__(game, sprite_sheet_dir, animation_time=frame_time, scale=scale)
         self.images = deque([pg.transform.scale(img, (img.get_width() * self.sprite_scale, img.get_height() * self.sprite_scale))
                              for img in self.images])
@@ -33,7 +38,7 @@ class Weapon(AnimatedSpriteObject):
                     self.reloading = False
                     self.frame_counter = 0
     
-    def get_weapon_position(self, img) -> tuple:
+    def get_weapon_position(self, img: pg.Surface) -> Tuple[float, float]:
         return (WIN_HALF_WIDTH - img.get_width() // 2, WIN_HEIGHT - img.get_height() - self.game.hud_renderer.main.get_height())
     
     def draw(self) -> None:
@@ -54,7 +59,7 @@ class Weapon(AnimatedSpriteObject):
 
 
 class Pistol(Weapon):
-    def __init__(self, game) -> None:
+    def __init__(self, game: Game) -> None:
         super().__init__(game,
                          damage=35,
                          max_ammo=200,
@@ -66,7 +71,7 @@ class Pistol(Weapon):
 
 
 class Shotgun(Weapon):
-    def __init__(self, game) -> None:
+    def __init__(self, game: Game) -> None:
         super().__init__(game,
                          damage=50,
                          max_ammo=50,

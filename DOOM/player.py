@@ -10,6 +10,12 @@ Classes:
     `Player`: Represents the player character in the game.
 """
 
+# import future and typing
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple
+if TYPE_CHECKING:
+    from game import Game
+
 import math
 import pygame as pg
 
@@ -35,8 +41,8 @@ class Player:
         `armor` (`int`): The current armor points of the player.
     """
 
-    def __init__(self, game) -> None:
-        self.game = game
+    def __init__(self, game: Game) -> None:
+        self.game: Game = game
         self.angle: float = 0
         self.x, self.y = 1.5, 1.5
         self.diag_move_corr = 1 / math.sqrt(2)
@@ -205,11 +211,11 @@ class Player:
         self.angle += self.mouse_rel * MOUSE_SPEED
     
     @property
-    def position(self) -> tuple[float, float]:
+    def position(self) -> Tuple[float, float]:
         return self.x, self.y
     
     @property
-    def grid_position(self) -> tuple[int, int]:
+    def grid_position(self) -> Tuple[int, int]:
         return int(self.x), int(self.y)
 
     def update(self) -> None:

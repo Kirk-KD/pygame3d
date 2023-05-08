@@ -1,3 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple
+if TYPE_CHECKING:
+    from game import Game
+
 import random
 import pygame as pg
 from collections import deque
@@ -8,8 +13,8 @@ from renderer.sprite_object import AnimatedSpriteObject
 
 
 class Enemy(AnimatedSpriteObject):
-    def __init__(self, game, detection_distance: float, attack_distance: float, speed: float, health: int, damage: int, accuracy: float,  
-                 base_path: str, attack_frame_index: int, anim_time: float, position: tuple[float, float], scale: float = 1, shift: float = 0) -> None:
+    def __init__(self, game: Game, detection_distance: float, attack_distance: float, speed: float, health: int, damage: int, accuracy: float,  
+                 base_path: str, attack_frame_index: int, anim_time: float, position: Tuple[float, float], scale: float = 1, shift: float = 0) -> None:
         super().__init__(game, base_path + "/idle", anim_time, position, scale, shift)
 
         self.detection_distance: float = detection_distance
@@ -38,7 +43,7 @@ class Enemy(AnimatedSpriteObject):
 
         self.frame_counter: int = 0
 
-        self.target_position: tuple = None
+        self.target_position: Tuple = None
     
     def logics(self) -> None:
         if not self.alive:
@@ -222,12 +227,12 @@ class Enemy(AnimatedSpriteObject):
         self.target_position = x + 0.5, y + 0.5
 
     @property
-    def grid_position(self) -> tuple[int, int]:
+    def grid_position(self) -> Tuple[int, int]:
         return int(self.x), int(self.y)
     
 
 class Zombieman(Enemy):
-    def __init__(self, game, position: tuple[float, float]):
+    def __init__(self, game: Game, position: Tuple[float, float]):
         super().__init__(game=game,
                          detection_distance=10,
                          attack_distance=6,
