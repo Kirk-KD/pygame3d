@@ -54,7 +54,9 @@ class Player:
         self.weapon_shot: bool = False
 
         self.health: int = 100
+        self.health_cap: int = 100
         self.armor: int = 0
+        self.armor_cap: int = 100
     
     def single_weapon_fire(self, event: pg.event.Event) -> None:
         """
@@ -128,6 +130,23 @@ class Player:
             self.health = 0
             # kill the player :D
             self.death()
+    
+    def heal(self, amount: int) -> None:
+        """Heal the player"""
+
+        self.health += amount
+        if self.health > self.health_cap:
+            self.health = self.health_cap
+    
+    def give_armor(self, amount: int) -> None:
+        """Give armor"""
+
+        self.armor += amount
+        if self.armor >= self.armor_cap:
+            self.armor = self.armor_cap
+    
+    def set_armor_cap(self, new_cap: int) -> None:
+        self.armor_cap = new_cap
     
     def death(self) -> None:
         """Die."""

@@ -1,9 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Tuple, List
 if TYPE_CHECKING:
     from game import Game
 
 import math
+import random
 
 from renderer.sprite_object import SpriteObject
 from weapon import Pistol, Shotgun
@@ -20,8 +21,8 @@ class Pickup(SpriteObject):
         `item_name` (`str`): The display name of this Pickup, display in the game HUD.
     """
 
-    def __init__(self, game: Game, item_name: str, image_path: str, position: Tuple[float, float], scale: float = 1, shift: float = 0) -> None:
-        super().__init__(game, image_path, position, scale, shift)
+    def __init__(self, game: Game, item_name: str, image_path: str | List[str], position: Tuple[float, float], scale: float = 1, shift: float = 0) -> None:
+        super().__init__(game, image_path if type(image_path) is str else random.choice(image_path), position, scale, shift)
 
         self.item_name: str = item_name
         self.pick_up_message: str = f"Picked up {self.item_name}."
@@ -53,7 +54,7 @@ class Pickup(SpriteObject):
 
 
 class ShotgunPickup(Pickup):
-    def __init__(self, game: Game, position: tuple[float, float]) -> None:
+    def __init__(self, game: Game, position: Tuple[float, float]) -> None:
         super().__init__(game, item_name="the Shotgun", image_path="pickup/shotgun", position=position, scale=0.16, shift=3)
     
     def pick_up(self) -> bool:
@@ -62,7 +63,7 @@ class ShotgunPickup(Pickup):
 
 
 class ClipPickup(Pickup):
-    def __init__(self, game: Game, position: tuple[float, float]) -> None:
+    def __init__(self, game: Game, position: Tuple[float, float]) -> None:
         super().__init__(game, item_name="a Clip", image_path="pickup/clip", position=position, scale=0.14, shift=3.3)
     
     def pick_up(self) -> bool:
@@ -74,7 +75,7 @@ class ClipPickup(Pickup):
 
 
 class ShellsPickup(Pickup):
-    def __init__(self, game: Game, position: tuple[float, float]) -> None:
+    def __init__(self, game: Game, position: Tuple[float, float]) -> None:
         super().__init__(game, item_name="4 Shotgun Shells", image_path="pickup/shells", position=position, scale=0.14, shift=3.3)
     
     def pick_up(self) -> bool:
@@ -85,8 +86,47 @@ class ShellsPickup(Pickup):
         return False
 
 
+class StimpackPickup(Pickup):
+    def __init__(self, game: Game, position: Tuple[float, float]) -> None:
+        super().__init__(game, item_name="a Stimpack", image_path=["pickup/stimpack_1", "pickup/stimpack_2", "pickup/stimpack_3"], position=position, scale=0.18, shift=2.6)
+    
+    def pick_up(self) -> bool:
+        if self.game.player.health >= self.game.player.health_cap:
+            return False
+        
+        self.game.player.heal(10)
+        return True
+
+
+class MedikitPickup(Pickup):
+    def __init__(self, game: Game, position: Tuple[float, float]) -> None:
+        super().__init__(game, item_name="a Medikit", image_path=["pickup/medikit_1", "pickup/medikit_2", "pickup/medikit_3"], position=position, scale=0.2, shift=2.1)
+    
+    def pick_up(self) -> bool:
+        if self.game.player.health >= self.game.player.health_cap:
+            return False
+        
+        self.game.player.heal(25)
+        return True
+
+
+class GreenArmorPickup(Pickup):
+    def __init__(self, game: Game, position: Tuple[float, float]) -> None:
+        super().__init__(game, item_name="the Armor", image_path="pickup/armor_green", position=position, scale=0.3, shift=1.2)
+    
+    def pick_up(self) -> bool:
+        if self.game.player.armor >= self.game.player.armor_cap:
+            return False
+        
+        self.game.player.give_armor(100)
+        return True
+
+
 PICKUPS = {
     "shotgun": ShotgunPickup,
     "clip": ClipPickup,
-    "shells": ShellsPickup
+    "shells": ShellsPickup,
+    "stimpack": StimpackPickup,
+    "medikit": MedikitPickup,
+    "armor_green": GreenArmorPickup
 }

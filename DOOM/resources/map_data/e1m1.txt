@@ -15,7 +15,7 @@ pickup shotgun
     1.5 15.5
 pickup end
 
-pickup clip
+pickup armor_green
     2.5 15.5
 pickup end
 

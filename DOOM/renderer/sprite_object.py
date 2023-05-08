@@ -1,3 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from game import Game
+
 import pygame as pg
 import os
 from collections import deque
@@ -6,8 +11,8 @@ from config import *
 
 
 class SpriteObject:
-    def __init__(self, game, image_name: str, position: tuple[float, float] = (0, 0), scale: float = 1, shift: float = 0) -> None:
-        self.game = game
+    def __init__(self, game: Game, image_name: str, position: tuple[float, float] = (0, 0), scale: float = 1, shift: float = 0) -> None:
+        self.game: Game = game
         self.x, self.y = position
         self.image: pg.Surface = pg.image.load("DOOM/resources/textures/sprites/" + image_name + ".png").convert_alpha()
         self.image_width, self.image_height = self.image.get_size()
