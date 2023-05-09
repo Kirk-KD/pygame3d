@@ -12,16 +12,17 @@ Classes:
 
 # import future and typing
 from __future__ import annotations
-from typing import TYPE_CHECKING, Tuple
-if TYPE_CHECKING:
-    from game import Game
 
 import math
+from typing import TYPE_CHECKING, Tuple
 import pygame as pg
 
-from config import *
-from weapon import *
+from config import PLAYER_MOVE_SPEED, PLAYER_SIZE_SCALE, MOUSE_MAX_REL, MOUSE_SPEED
+from weapon import Weapon
 from inventory import Inventory
+
+if TYPE_CHECKING:
+    from game import Game
 
 
 class Player:
@@ -58,28 +59,33 @@ class Player:
         self.armor: int = 0
         self.armor_cap: int = 100
         self.damage_reduction: float = 0
-    
+
     def single_weapon_fire(self, event: pg.event.Event) -> None:
         """
-        Fire the player's weapon once if the left mouse button is pressed, and the weapon is ready to fire.
-        Decreases the weapon's ammo count by one and plays the weapon's firing sound.
+        Fire the player's weapon once if the left mouse button is pressed, and the 
+        weapon is ready to fire. Decreases the weapon's ammo count by one and plays 
+        the weapon's firing sound.
         
         Args:
-            event (pygame.event.Event): A pygame event object containing the event type and button pressed.
+            event (pygame.event.Event): A pygame event object containing the event 
+                type and button pressed.
         
         Returns:
             None
         """
 
-        # Check if the mouse button is pressed down, and if it is the left button and the player is not currently shooting or reloading.
+        # Check if the mouse button is pressed down, and if it is the left button
+        # and the player is not currently shooting or reloading.
         if event.type == pg.MOUSEBUTTONDOWN:
-            if event.button == 1 and not self.weapon_shot and not self.weapon.reloading and self.weapon.ammo > 0:
-                # If these conditions are met, play the weapon sound, decrease the ammo count, and set the weapon_shot and reloading flags to True.
+            if (event.button == 1 and not self.weapon_shot and
+                not self.weapon.reloading and self.weapon.ammo > 0):
+                # If these conditions are met, play the weapon sound, decrease the
+                #  ammo count, and set the weapon_shot and reloading flags to True.
                 self.weapon.play_sound()
                 self.weapon.ammo -= 1
                 self.weapon_shot = True
                 self.weapon.reloading = True
-    
+
     def switch_weapon(self) -> None:
         """Check keyboard inputs to switch weapon."""
 
@@ -98,19 +104,18 @@ class Player:
             weapon = 5
         else:
             weapon = -1
-        
+
         if weapon != -1 and self.inventory.has_weapon_at(weapon):
             self.set_weapon(self.inventory.weapons[weapon])
 
     def set_weapon(self, weapon: Weapon) -> None:
         """This function literally just sets the weapon."""
 
-        if type(weapon) == type(self.weapon):
+        if isinstance(weapon, type(self.weapon)):
             return
 
-        # Set the weapon to be the weapon. The weapon is now the weapon. This comment is as useless as this function.
         self.weapon = weapon
-    
+
     def give_weapon(self, weapon: Weapon) -> None:
         self.set_weapon(weapon)
 
@@ -119,7 +124,7 @@ class Player:
                 return
 
         self.inventory.add_weapon(weapon)
-    
+
     def take_damage(self, amount: int) -> None:
         """Make the player suffer and take damage."""
 
@@ -132,35 +137,35 @@ class Player:
         if self.armor < 0:
             self.armor = 0
             self.damage_reduction = 0
-        
+
         # if health below 0 (die)
         if self.health <= 0:
             # set to 0
             self.health = 0
             # kill the player :D
             self.death()
-    
+
     def heal(self, amount: int) -> None:
         """Heal the player"""
 
         self.health += amount
         if self.health > self.health_cap:
             self.health = self.health_cap
-    
+
     def set_armor(self, amount: int) -> None:
         self.armor = amount
-    
+
     def set_damage_reduction(self, percentage: float) -> None:
         self.damage_reduction = percentage
-    
+
     def set_armor_cap(self, new_cap: int) -> None:
         self.armor_cap = new_cap
-    
+
     def death(self) -> None:
         """Die."""
 
-        ...  # TODO
-    
+        print("Player died (implement this later)")
+
     def movement(self) -> None:
         """Handles the movement."""
 
@@ -181,7 +186,7 @@ class Player:
         # sprint
         if keys[pg.K_LSHIFT]:
             speed *= 1.65
-        
+
         # calculate the player position in the next frame with trigonometry
         speed_sin = speed * sin_a
         speed_cos = speed * cos_a
@@ -227,7 +232,7 @@ class Player:
         # if player's x is unoccupied, move
         if self.game.level.map.unoccupied(int(self.x + dx * scale), int(self.y)):
             self.x += dx
-        
+
         # if the player's y is unoccupied, move
         if self.game.level.map.unoccupied(int(self.x), int(self.y + dy * scale)):
             self.y += dy
@@ -236,11 +241,11 @@ class Player:
         self.mouse_rel = pg.mouse.get_rel()[0]
         self.mouse_rel = max(-MOUSE_MAX_REL, min(MOUSE_MAX_REL, self.mouse_rel))
         self.angle += self.mouse_rel * MOUSE_SPEED
-    
+
     @property
     def position(self) -> Tuple[float, float]:
         return self.x, self.y
-    
+
     @property
     def grid_position(self) -> Tuple[int, int]:
         return int(self.x), int(self.y)
