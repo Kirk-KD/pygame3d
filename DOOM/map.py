@@ -3,8 +3,6 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
-from config import *
-
 
 class Map:
     def __init__(self) -> None:
@@ -13,9 +11,10 @@ class Map:
         self.width: int = 0
 
         self.pathfind_grid: Grid = None
-        self.pathfinder: AStarFinder = AStarFinder(diagonal_movement=DiagonalMovement.only_when_no_obstacle)
-    
-    def load(self, map: List[List[str]]) -> None:
+        self.pathfinder: AStarFinder = AStarFinder(
+            diagonal_movement=DiagonalMovement.only_when_no_obstacle)
+
+    def load(self, map_matrix: List[List[str]]) -> None:
         """From the given 2D list representation of the map, load the pathfinding 2D list 
         in the format required by the pathfinding library.
 
@@ -23,10 +22,10 @@ class Map:
             map (list[list[str]]): The original 2D map with texture names representing 
                 walls and space representing an empty cell.
         """
-        self.map = map
+        self.map = map_matrix
         self.height = len(self.map)
         self.width = max(len(row) for row in self.map)
-        
+
         grid = []
         for row in range(self.height):
             g_row = []
@@ -56,10 +55,11 @@ class Map:
                 return self.map[y][x] == " "
             except IndexError:
                 return True
-        
+
         return True
 
-    def astar_next(self, start: Tuple[int, int], target: Tuple[int, int]) -> Tuple[int, int] or None:
+    def astar_next(self, start: Tuple[int, int], target: Tuple[int, int])\
+          -> Tuple[int, int] or None:
         """Using the A* algorithm, find the next step to go to when pathfinding towards `target`.
 
         Args:
@@ -75,10 +75,9 @@ class Map:
         n_start = self.pathfind_grid.node(*start)
         n_end = self.pathfind_grid.node(*target)
 
-        path, runs = self.pathfinder.find_path(n_start, n_end, self.pathfind_grid)
+        path, _ = self.pathfinder.find_path(n_start, n_end, self.pathfind_grid)
         if len(path) <= 1:
             return None
-        else:
-            return path[1]
+        return path[1]
         # print('operations:', runs, 'path length:', len(path))
         # print(self.pathfind_grid.grid_str(path=path, start=n_start, end=n_end))
