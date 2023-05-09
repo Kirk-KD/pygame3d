@@ -10,6 +10,9 @@ import math
 
 from config import *
 from renderer.sprite_object import AnimatedSpriteObject
+from object_registry import ObjectRegistry
+
+ENEMIES = ObjectRegistry()
 
 
 class Enemy(AnimatedSpriteObject):
@@ -229,9 +232,12 @@ class Enemy(AnimatedSpriteObject):
     @property
     def grid_position(self) -> Tuple[int, int]:
         return int(self.x), int(self.y)
-    
 
+
+@ENEMIES.register
 class Zombieman(Enemy):
+    NAME = "zombieman"
+
     def __init__(self, game: Game, position: Tuple[float, float]):
         super().__init__(game=game,
                          detection_distance=10,
@@ -246,6 +252,3 @@ class Zombieman(Enemy):
                          position=position,
                          scale=0.7,
                          shift=0.25)
-
-
-ENEMIES = {"zombieman": Zombieman}

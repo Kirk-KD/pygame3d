@@ -15,7 +15,7 @@ pickup shotgun
     1.5 15.5
 pickup end
 
-pickup armor_green
+pickup armor_blue
     2.5 15.5
 pickup end
 

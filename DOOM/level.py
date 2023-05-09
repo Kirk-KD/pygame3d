@@ -119,7 +119,7 @@ class Level:
 
             if line.startswith(PICKUP):
                 pickup_name = line[len(PICKUP):]
-                if pickup_name not in PICKUPS:
+                if not PICKUPS.has(pickup_name):
                     raise Exception(f"No pickup named '{pickup_name}'")
                 continue
 
@@ -150,7 +150,7 @@ class Level:
                     raise Exception(f"Didn't end enemy def!")
 
                 enemy_name = line[len(ENEMY):]
-                if enemy_name not in ENEMIES:
+                if not ENEMIES.has(enemy_name):
                     raise Exception(f"No enemy named '{enemy_name}'!")
                 
                 continue
@@ -166,14 +166,14 @@ class Level:
             if enemy_name:
                 enemy_x, enemy_y = line.strip().split()
                 enemy_x, enemy_y = float(enemy_x), float(enemy_y)
-                self.objects_manager.add_enemy(ENEMIES[enemy_name](self.game, (enemy_x, enemy_y)))
+                self.objects_manager.add_enemy(ENEMIES.get(enemy_name)(self.game, (enemy_x, enemy_y)))
                 continue
 
             # during a pickup def
             if pickup_name:
                 pu_x, pu_y = line.strip().split()
                 pu_x, pu_y = float(pu_x), float(pu_y)
-                self.objects_manager.add_pickup(PICKUPS[pickup_name](self.game, (pu_x, pu_y)))
+                self.objects_manager.add_pickup(PICKUPS.get(pickup_name)(self.game, (pu_x, pu_y)))
                 continue
         
         self.map.load(self.png_map.to_map())
