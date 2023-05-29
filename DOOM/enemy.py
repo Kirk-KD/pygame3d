@@ -11,6 +11,7 @@ import math
 from config import *
 from renderer.sprite_object import AnimatedSpriteObject
 from object_registry import ObjectRegistry
+from pickup import PICKUPS
 
 ENEMIES = ObjectRegistry()
 
@@ -152,6 +153,8 @@ class Enemy(AnimatedSpriteObject):
         if self.healh <= 0:
             self.alive = False
             self.death = True
+
+            self.drop_loot()
     
     def check_attack(self) -> None:
         if self.player_in_attack_distance() and self.can_see_player and not self.pain:
@@ -232,6 +235,14 @@ class Enemy(AnimatedSpriteObject):
     @property
     def grid_position(self) -> Tuple[int, int]:
         return int(self.x), int(self.y)
+
+    def drop_loot(self) -> None:
+        loots = ["clip", "shells", "stimpack", "medikit", "armor_green", "armor_blue", None]
+        weights = [0.45, 0.35, 0.1, 0.05, 0.025, 0.025, 1]
+        loot_name = random.choices(loots, weights, k=1)[0]
+
+        if loot_name is not None:
+            self.game.objects_manager.add_pickup(PICKUPS.get(loot_name)(self.game, self.position))
 
 
 @ENEMIES.register
