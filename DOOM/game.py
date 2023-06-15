@@ -21,7 +21,8 @@ from player import Player
 from level import Level
 from audio import AudioManager
 from weapon import *
-from pickup import ShotgunPickup, ShellsPickup
+from menu.menu import Menu
+from menu.main_menu import MainMenu
 
 
 class Game:
@@ -50,6 +51,8 @@ class Game:
 
     def __init__(self, title: str) -> None:
         self.title: str = title
+
+        self.in_menu: bool = True
 
         # initialize when this object is initialized
         self.__pre_init()
@@ -89,6 +92,9 @@ class Game:
         weapon (pistol).
         """
 
+        # load the menu
+        self.menu: Menu = MainMenu(self)
+
         # create the audio manager and load music
         self.audio_manager: AudioManager = AudioManager()
         self.audio_manager.load("E1M1.mp3")
@@ -120,15 +126,20 @@ class Game:
         the display.
         """
 
-        # poll events
-        self.__events()
-        # tick FPS
-        self.__tick_delta()
+        if self.in_menu:
+            self.running = not self.menu.events()
+            if self.running:
+                self.menu.draw()
+        else:
+            # poll events
+            self.__events()
+            # tick FPS
+            self.__tick_delta()
 
-        # update everything
-        self.__update()
-        # draw everything
-        self.__draw()
+            # update everything
+            self.__update()
+            # draw everything
+            self.__draw()
 
         # update the display
         pg.display.flip()

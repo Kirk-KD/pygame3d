@@ -18,7 +18,7 @@ SCREEN_DISTANCE: float = WIN_HALF_WIDTH / math.tan(HALF_FOV)
 SCALE: int = WIN_WIDTH // RAYS
 
 PLAYER_ROT_SPEED: float = math.radians(120)
-PLAYER_MOVE_SPEED: float = 3.5
+PLAYER_MOVE_SPEED: float = 2.5
 PLAYER_SIZE_SCALE: float = 0.03
 
 ENEMY_SIZE_SCALE: float = 0.2
