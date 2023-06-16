@@ -67,7 +67,7 @@ class ObjectRenderer:
         """Draw the sky."""
 
         # calculate and update the sky x coordinate based on mouse movement
-        self.sky_offset = (self.sky_offset + 4 * self.game.player.mouse_rel) % WIN_WIDTH
+        self.sky_offset = (self.sky_offset + 1.5 * self.game.player.mouse_rel) % WIN_WIDTH
         # draw the two sky textures to create a seemless skybox.
         self.surface.blit(self.sky_texture.texture, (-self.sky_offset, 0))
         self.surface.blit(self.sky_texture.texture, (-self.sky_offset + WIN_WIDTH, 0))

@@ -10,7 +10,7 @@ class NewGame(Button):
         super().__init__(None, 300, "new game")
     
     def on_click(self, menu):
-        menu.game.in_menu = False
+        menu.game.new_game()
 
 
 class Options(Button):

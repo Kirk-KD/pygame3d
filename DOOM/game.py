@@ -104,7 +104,6 @@ class Game:
 
         # create the audio manager and load music
         self.audio_manager: AudioManager = AudioManager()
-        self.audio_manager.load("E1M1.mp3")
 
         # create the HUD renderer
         self.hud_renderer: HUDRenderer = HUDRenderer(self)
@@ -205,11 +204,17 @@ class Game:
         self.running = True
 
         # Start playing the background music
-        self.audio_manager.play_music()
+        self.audio_manager.play_music(self.audio_manager.title_music_path)
 
         # Run the game loop until the game is no longer running
         while self.running:
             self.__frame()
+    
+    def new_game(self) -> None:
+        self.in_menu = False
+        # self.menu = None
+
+        self.audio_manager.play_music(self.audio_manager.music_path)
 
     def __tick_delta(self) -> None:
         """

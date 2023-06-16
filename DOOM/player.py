@@ -184,6 +184,7 @@ class Player:
         # multiply the speed by deltatime
         speed = PLAYER_MOVE_SPEED * self.game.deltatime
         classic_mouse_speed = CLASSIC_MOUSE_SPEED * self.game.deltatime
+        rel = 700 * self.game.deltatime
 
         # get all keys pressed
         keys = pg.key.get_pressed()
@@ -193,12 +194,15 @@ class Player:
         if keys[pg.K_LSHIFT] or keys[pg.K_RSHIFT]:
             speed *= 1.65
             classic_mouse_speed *= 1.65
+            rel *= 1.65
 
         # calculate the player position in the next frame with trigonometry
         speed_sin = speed * sin_a
         speed_cos = speed * cos_a
 
         if self.game.classic_control:
+            clear_mouse_rel = True
+
             if keys[pg.K_UP]:
                 num_key_pressed += 1
                 dx += speed_cos
@@ -215,7 +219,9 @@ class Player:
                     dx += speed_sin
                     dy += -speed_cos
                 else:  # turn left
+                    clear_mouse_rel = False
                     self.angle -= classic_mouse_speed
+                    self.mouse_rel = -rel
             
             if keys[pg.K_RIGHT]:
                 if keys[pg.K_LALT] or keys[pg.K_RALT]:  # starfe right
@@ -223,7 +229,9 @@ class Player:
                     dx += -speed_sin
                     dy += speed_cos
                 else:  # turn right
+                    clear_mouse_rel = False
                     self.angle += classic_mouse_speed
+                    self.mouse_rel = rel
             
             if keys[pg.K_COMMA]:  # strafe left
                 num_key_pressed += 1
@@ -266,6 +274,10 @@ class Player:
 
         # set the angle back in range
         self.angle %= math.tau
+
+        # clear rel
+        if clear_mouse_rel:
+            self.mouse_rel = 0
 
     def check_collision(self, dx: float, dy: float) -> None:
         """Check collision."""
