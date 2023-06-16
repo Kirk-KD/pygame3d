@@ -17,7 +17,7 @@ import math
 from typing import TYPE_CHECKING, Tuple
 import pygame as pg
 
-from config import PLAYER_MOVE_SPEED, PLAYER_SIZE_SCALE, MOUSE_MAX_REL, MOUSE_SPEED
+from config import PLAYER_MOVE_SPEED, PLAYER_SIZE_SCALE, MOUSE_MAX_REL, MOUSE_SPEED, CLASSIC_MOUSE_SPEED
 from weapon import Weapon
 from inventory import Inventory
 
@@ -74,17 +74,22 @@ class Player:
             None
         """
 
-        # Check if the mouse button is pressed down, and if it is the left button
-        # and the player is not currently shooting or reloading.
-        if event.type == pg.MOUSEBUTTONDOWN:
-            if (event.button == 1 and not self.weapon_shot and
-                not self.weapon.reloading and self.weapon.ammo > 0):
-                # If these conditions are met, play the weapon sound, decrease the
-                #  ammo count, and set the weapon_shot and reloading flags to True.
-                self.weapon.play_sound()
-                self.weapon.ammo -= 1
-                self.weapon_shot = True
-                self.weapon.reloading = True
+        if not self.game.classic_control:
+            # Check if the mouse button is pressed down, and if it is the left button
+            # and the player is not currently shooting or reloading.
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                self.shoot()
+
+    def shoot(self) -> None:
+        if (not self.weapon_shot and
+            not self.weapon.reloading and
+            self.weapon.ammo > 0):
+            # If these conditions are met, play the weapon sound, decrease the
+            # ammo count, and set the weapon_shot and reloading flags to True.
+            self.weapon.play_sound()
+            self.weapon.ammo -= 1
+            self.weapon_shot = True
+            self.weapon.reloading = True
 
     def switch_weapon(self) -> None:
         """Check keyboard inputs to switch weapon."""
@@ -178,39 +183,78 @@ class Player:
 
         # multiply the speed by deltatime
         speed = PLAYER_MOVE_SPEED * self.game.deltatime
+        classic_mouse_speed = CLASSIC_MOUSE_SPEED * self.game.deltatime
 
         # get all keys pressed
         keys = pg.key.get_pressed()
         num_key_pressed = -1
 
         # sprint
-        if keys[pg.K_LSHIFT]:
+        if keys[pg.K_LSHIFT] or keys[pg.K_RSHIFT]:
             speed *= 1.65
+            classic_mouse_speed *= 1.65
 
         # calculate the player position in the next frame with trigonometry
         speed_sin = speed * sin_a
         speed_cos = speed * cos_a
 
-        # W
-        if keys[pg.K_w]:
-            num_key_pressed += 1
-            dx += speed_cos
-            dy += speed_sin
-        # S
-        if keys[pg.K_s]:
-            num_key_pressed += 1
-            dx += -speed_cos
-            dy += -speed_sin
-        # A
-        if keys[pg.K_a]:
-            num_key_pressed += 1
-            dx += speed_sin
-            dy += -speed_cos
-        # D
-        if keys[pg.K_d]:
-            num_key_pressed += 1
-            dx += -speed_sin
-            dy += speed_cos
+        if self.game.classic_control:
+            if keys[pg.K_UP]:
+                num_key_pressed += 1
+                dx += speed_cos
+                dy += speed_sin
+            
+            if keys[pg.K_DOWN]:
+                num_key_pressed += 1
+                dx += -speed_cos
+                dy += -speed_sin
+            
+            if keys[pg.K_LEFT]:
+                if keys[pg.K_LALT] or keys[pg.K_RALT]:  # strafe left
+                    num_key_pressed += 1
+                    dx += speed_sin
+                    dy += -speed_cos
+                else:  # turn left
+                    self.angle -= classic_mouse_speed
+            
+            if keys[pg.K_RIGHT]:
+                if keys[pg.K_LALT] or keys[pg.K_RALT]:  # starfe right
+                    num_key_pressed += 1
+                    dx += -speed_sin
+                    dy += speed_cos
+                else:  # turn right
+                    self.angle += classic_mouse_speed
+            
+            if keys[pg.K_COMMA]:  # strafe left
+                num_key_pressed += 1
+                dx += speed_sin
+                dy += -speed_cos
+            
+            if keys[pg.K_PERIOD]:  # strafe right
+                num_key_pressed += 1
+                dx += -speed_sin
+                dy += speed_cos
+        else:
+            # W
+            if keys[pg.K_w]:
+                num_key_pressed += 1
+                dx += speed_cos
+                dy += speed_sin
+            # S
+            if keys[pg.K_s]:
+                num_key_pressed += 1
+                dx += -speed_cos
+                dy += -speed_sin
+            # A
+            if keys[pg.K_a]:
+                num_key_pressed += 1
+                dx += speed_sin
+                dy += -speed_cos
+            # D
+            if keys[pg.K_d]:
+                num_key_pressed += 1
+                dx += -speed_sin
+                dy += speed_cos
 
         # diagnal move speed correction
         if num_key_pressed:
@@ -252,6 +296,7 @@ class Player:
 
     def update(self) -> None:
         self.movement()
-        self.mouse_control()
+        if not self.game.classic_control:
+            self.mouse_control()
         self.switch_weapon()
         self.weapon.update()

@@ -2,10 +2,18 @@ import pygame as pg
 from typing import List
 
 from renderer.hud_renderer import HUDText
+from config import WIN_WIDTH, WIN_HEIGHT
+
+
+def fit_window(surf: pg.Surface):
+    return pg.transform.scale(surf, (WIN_WIDTH, WIN_HEIGHT))
 
 
 # text renderer
 hud_text = HUDText()
+
+# resources
+skull = pg.transform.scale_by(pg.image.load("./DOOM/resources/textures/menu/skull.png"), 3)
 
 
 class Button:
@@ -17,10 +25,10 @@ class Button:
         self.position = x, y
         self.text = text
 
-        self.surface = hud_text.string_to_surface(self.text, "small", 5)  # render the text once for better performance
+        self.surface = hud_text.string_to_surface(self.text, "small", 7)  # render the text once for better performance
         self.width, self.height = self.surface.get_size()  # get the text size
     
-    def draw(self, menu):
+    def draw(self, menu, is_selected = False):
         """Draw the button"""
 
         if self.x is None:  # x is None, center x
@@ -34,8 +42,12 @@ class Button:
             y = self.y - self.height // 2
 
         menu.surface.blit(self.surface, (x, y))
+
+        if is_selected:
+            skull_x = x - 80
+            menu.surface.blit(skull, (skull_x, y))
     
-    def on_click(self, game):
+    def on_click(self, menu):
         """Implemented by children classes. Called when the player presses enter or space."""
 
         raise NotImplementedError
@@ -50,6 +62,7 @@ class Text:
         self.y: int = y
         self.scale: int = scale  # text scale
         self.surface: pg.Surface = hud_text.string_to_surface(self.text, "small", self.scale)  # render the text
+        self.width, self.height = self.surface.get_size()  # get the text size
     
     def draw(self, menu):
         """Draw the text."""
@@ -67,17 +80,23 @@ class Text:
         menu.surface.blit(self.surface, (x, y))
 
 
+class MenuPage:
+    def __init__(self, buttons: List[Button], texts: List[Text]):
+        self.buttons = buttons
+        self.texts = texts
+
+
 class Menu:
     """Parent class for the menu."""
 
-    def __init__(self, game, buttons: List[Button], texts: List[Text]) -> None:
+    def __init__(self, game, background: pg.Surface, page: MenuPage) -> None:
         self.game = game
+        self.background: pg.Surface = background
         self.surface: pg.Surface = self.game.surface  # main surface
-        self.buttons: List[Button] = buttons
-        self.texts: List[Text] = texts
+        self.page: MenuPage = page
 
         self.selected_btn_idx: int = 0  # index of selected button
-        self.selected_button: Button = self.buttons[0] if len(self.buttons) else None  # the selected button
+        self.selected_button: Button = self.page.buttons[0] if len(self.page.buttons) else None  # the selected button
 
     def events(self) -> bool:
         """Poll events, returns whether or not the game should quit."""
@@ -88,21 +107,30 @@ class Menu:
 
             if event.type == pg.KEYDOWN:  # key press
                 if event.key == pg.K_KP_ENTER or event.key == pg.K_SPACE:  # click a button
-                    self.selected_button.on_click(self.game)
+                    self.selected_button.on_click(self)
                 elif event.key == pg.K_UP:  # loop selections
-                    if len(self.buttons):
+                    if len(self.page.buttons):
                         self.selected_btn_idx -= 1
-                        self.selected_btn_idx %= len(self.buttons)
+                        self.selected_btn_idx %= len(self.page.buttons)
+                        self.selected_button = self.page.buttons[self.selected_btn_idx]
                 elif event.key == pg.K_DOWN:  # loop selections
-                    if len(self.buttons):
+                    if len(self.page.buttons):
                         self.selected_btn_idx += 1
-                        self.selected_btn_idx %= len(self.buttons)
+                        self.selected_btn_idx %= len(self.page.buttons)
+                        self.selected_button = self.page.buttons[self.selected_btn_idx]
         
         return False
     
     def draw(self) -> None:
-        for button in self.buttons:
-            button.draw(self)
+        self.surface.blit(self.background, (0, 0))
+
+        for button in self.page.buttons:
+            button.draw(self, button == self.selected_button)
         
-        for text in self.texts:
+        for text in self.page.texts:
             text.draw(self)
+    
+    def switch_page(self, new_page: MenuPage):
+        self.page = new_page
+        self.selected_btn_idx = 0
+        self.selected_button = self.page.buttons[0] if len(self.page.buttons) else None

@@ -52,7 +52,11 @@ class Game:
     def __init__(self, title: str) -> None:
         self.title: str = title
 
+        # game didn't start yet, in menu
         self.in_menu: bool = True
+
+        # game options
+        self.classic_control: bool = False
 
         # initialize when this object is initialized
         self.__pre_init()
@@ -83,6 +87,9 @@ class Game:
         # lock the mouse
         pg.event.set_grab(True)
         pg.mouse.set_visible(False)
+
+        # flag for ctrl key
+        self.ctrl: bool = False
 
     def __init(self) -> None:
         """Objects to be setup before the game starts running.
@@ -169,9 +176,21 @@ class Game:
             if event.type == pg.QUIT:
                 # quit
                 self.__quit()
+            
+            # key
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_LCTRL or event.key == pg.K_RCTRL:
+                    self.ctrl = True
+            
+            if event.type == pg.KEYUP:
+                if event.key == pg.K_LCTRL or event.key == pg.K_RCTRL:
+                    self.ctrl = False
 
             # shoot
             self.player.single_weapon_fire(event)
+        
+        if self.ctrl:
+            self.player.shoot()
 
     def run(self) -> None:
         """
