@@ -15,6 +15,8 @@ class HUDText:
         for char in s.lower():
             if char == ".":
                 char = "dot"
+            elif char == ":":
+                char = "colon"
             elif char == " ":
                 char = "space"
             surf = getattr(self, lookup_name + "_lookup")[char]

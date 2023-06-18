@@ -1,6 +1,8 @@
 from PIL import Image
 from typing import Tuple
 
+from player import Player
+
 RGB_TO_TEX = {
     (0, 0, 0): "STARTAN3",
     (255, 0, 0): "STARG3",
@@ -40,7 +42,7 @@ class PNGMap:
 
     def to_map(self) -> None:
         map = []
-        
+
         for y in range(self.image.height):
             row = []
             for x in range(self.image.width):
@@ -50,9 +52,17 @@ class PNGMap:
                     row.append(" ")
                 else:
                     row.append(RGB_TO_TEX[rgb])
+
+                    if RGB_TO_TEX[rgb] == "SW1STARG":  # lever
+                        self.next_level = x, y
             map.append(row)
 
         return map
     
     def get(self, x: int, y: int) -> Tuple[int, int, int]:
         return self.pixels[x, y]
+
+    def can_use_lever(self, player: Player):
+        pgx, pgy = player.grid_position
+        nlx, nly = self.next_level
+        return abs(pgx - nlx) <= 1 and abs(pgy - nly) <= 1

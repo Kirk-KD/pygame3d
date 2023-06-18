@@ -52,4 +52,4 @@ class MainMenu(Menu):
             Text("choose your control", None, 300, 7),
             Text("default is modern.", None, 360, 4)
         ])
-        super().__init__(game, background, self.main_page)
+        super().__init__(game, background, self.main_page, game.audio_manager.title_music_path)

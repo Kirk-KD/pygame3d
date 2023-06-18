@@ -9,13 +9,40 @@ object end
 enemy zombieman
     1.5 15.5
     17.5 8.5
+    22.5 8
+    22 11
+    32.5 10.5
+    37.5 14.5
+    28.5 17.5
+
+    42.5 29.5
+    45 28
+    48 28
+    47 31
 enemy end
 
 pickup shotgun
-    1.5 15.5
+    19.3 8.1
+pickup end
+
+pickup stimpack
+    26.2 7.5
+    34.5 13.5
+    36 17
+    41.5 18.3
+    41.2 18.5
+pickup end
+
+pickup medikit
+    42 16.3
+    47 24
+pickup end
+
+pickup armor_green
+    3.5 13.5
 pickup end
 
 pickup armor_blue
-    2.5 15.5
+    45.5 26.5
 pickup end
 

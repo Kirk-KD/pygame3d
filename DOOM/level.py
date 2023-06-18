@@ -66,6 +66,8 @@ class Level:
         self.map: Map = Map()
         self.sprite_objects: list[SpriteObject] = []
 
+        self.total_enemies: int
+
         self.load()
     
     def load(self) -> None:
@@ -75,6 +77,10 @@ class Level:
         Raises:
             Exception: when the map file read is not in a correct format.
         """
+
+        self.objects_manager.enemies = []
+        self.objects_manager.objects = []
+        self.objects_manager.pickups = []
 
         # read the level file
         with open(self.path + ".txt", "r") as f:
@@ -184,5 +190,7 @@ class Level:
         if sky_name:
             self.game.object_renderer.load_sky_texture(sky_name)
             print(f"LOADED SKY TEXTURE: {sky_name}")
+        
+        self.total_enemies = len(self.objects_manager.enemies)
 
         print("Level loaded!")

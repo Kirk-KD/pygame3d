@@ -17,9 +17,10 @@ import math
 from typing import TYPE_CHECKING, Tuple
 import pygame as pg
 
-from config import PLAYER_MOVE_SPEED, PLAYER_SIZE_SCALE, MOUSE_MAX_REL, MOUSE_SPEED, CLASSIC_MOUSE_SPEED
+from config import PLAYER_MOVE_SPEED, PLAYER_SIZE_SCALE, MOUSE_MAX_REL, MOUSE_SPEED, CLASSIC_MOUSE_SPEED, FPS
 from weapon import Weapon
 from inventory import Inventory
+from menu.level_complete_menu import LevelCompleteMenu
 
 if TYPE_CHECKING:
     from game import Game
@@ -81,6 +82,9 @@ class Player:
                 self.shoot()
 
     def shoot(self) -> None:
+        if self.is_dead:
+            return
+
         if (not self.weapon_shot and
             not self.weapon.reloading and
             self.weapon.ammo > 0):
@@ -90,6 +94,8 @@ class Player:
             self.weapon.ammo -= 1
             self.weapon_shot = True
             self.weapon.reloading = True
+
+            self.game.shots_fired += 1
 
     def switch_weapon(self) -> None:
         """Check keyboard inputs to switch weapon."""
@@ -156,6 +162,9 @@ class Player:
     def heal(self, amount: int) -> None:
         """Heal the player"""
 
+        if self.is_dead:
+            return
+
         self.health += amount
         if self.health > self.health_cap:
             self.health = self.health_cap
@@ -172,9 +181,10 @@ class Player:
     def death(self) -> None:
         """Die."""
 
-        print("Player died (implement this later)")
+        self.mouse_rel = 0
+        self.game.deaths += 1
 
-        # self.game.audio_manager.play(self.game.audio_manager.player_death)
+        self.game.audio_manager.play(self.game.audio_manager.player_death)
 
     def movement(self) -> None:
         """Handles the movement."""
@@ -303,6 +313,14 @@ class Player:
         self.mouse_rel = max(-MOUSE_MAX_REL, min(MOUSE_MAX_REL, self.mouse_rel))
         self.angle += self.mouse_rel * MOUSE_SPEED
 
+    def use_lever(self) -> None:
+        if self.game.level.png_map.can_use_lever(self):
+            if self.game.kills_percentage >= 70:
+                self.game.stop_timer()
+                self.game.open_menu(LevelCompleteMenu(self.game))
+            else:
+                self.game.hud_renderer.console("kill at least 70% of all enemies to proceed.", FPS * 2.5)
+
     @property
     def position(self) -> Tuple[float, float]:
         return self.x, self.y
@@ -311,7 +329,14 @@ class Player:
     def grid_position(self) -> Tuple[int, int]:
         return int(self.x), int(self.y)
 
+    @property
+    def is_dead(self) -> bool:
+        return self.health <= 0
+
     def update(self) -> None:
+        if self.is_dead:
+            return
+        
         self.movement()
         if not self.game.classic_control:
             self.mouse_control()

@@ -106,7 +106,7 @@ class StimpackPickup(Pickup):
     NAME = "stimpack"
 
     def __init__(self, game: Game, position: Tuple[float, float]) -> None:
-        super().__init__(game, item_name="a Stimpack", image_path=["pickup/stimpack_1", "pickup/stimpack_2", "pickup/stimpack_3"], position=position, sound=game.audio_manager.item_pickup, scale=0.18, shift=2.6)
+        super().__init__(game, item_name="a Stimpack", image_path=["pickup/stimpack_1", "pickup/stimpack_2", "pickup/stimpack_3"], position=position, sound=game.audio_manager.item_pickup, scale=0.18, shift=2.4)
     
     def pick_up(self) -> bool:
         if self.game.player.health >= self.game.player.health_cap:

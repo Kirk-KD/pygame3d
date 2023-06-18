@@ -166,6 +166,8 @@ class Enemy(AnimatedSpriteObject):
 
                 self.health -= self.game.player.weapon.damage
 
+                self.game.shots_hit += 1
+
                 if self.health > 0:
                     self.play_sound(self.hurt_sound)
     
@@ -177,6 +179,8 @@ class Enemy(AnimatedSpriteObject):
             self.game.audio_manager.play(self.death_sound)
 
             self.drop_loot()
+
+            self.game.kills += 1
     
     def check_attack(self) -> None:
         if self.player_in_attack_distance() and self.can_see_player and not self.pain:
@@ -297,7 +301,7 @@ class Zombieman(Enemy):
                          speed=0.03,
                          health=100,
                          damage=10,
-                         accuracy=0.25,
+                         accuracy=0.45,
                          base_path="enemies/zombieman",
                          attack_frame_index=1,
                          anim_time=200,

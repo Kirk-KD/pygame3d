@@ -7,6 +7,8 @@ the `Game` object from within `main.py`.
 # import pygame
 import pygame as pg
 
+import datetime
+
 # import all the rendering classes
 from renderer.hud_renderer import HUDRenderer
 from renderer.raycasting import Raycasting
@@ -53,7 +55,7 @@ class Game:
         self.title: str = title
 
         # game didn't start yet, in menu
-        self.in_menu: bool = True
+        self.in_menu: bool = False
 
         # game options
         self.classic_control: bool = False
@@ -91,6 +93,11 @@ class Game:
         # flag for ctrl key
         self.ctrl: bool = False
 
+        # level timer
+        self.start_time: datetime.datetime = None
+        self.finish_time: datetime.datetime = None
+        self.seconds: float = None
+
     def __init(self) -> None:
         """Objects to be setup before the game starts running.
 
@@ -99,12 +106,13 @@ class Game:
         weapon (pistol).
         """
 
-        # load the menu
-        self.menu: Menu = MainMenu(self)
-
         # create the audio manager and load music
         self.audio_manager: AudioManager = AudioManager()
 
+        # load the menu
+        self.open_menu(MainMenu(self))
+
+    def play(self, died: bool = False) -> None:
         # create the HUD renderer
         self.hud_renderer: HUDRenderer = HUDRenderer(self)
 
@@ -123,6 +131,16 @@ class Game:
 
         # create the raycast engine
         self.raycast: Raycasting = Raycasting(self)
+
+        # counters
+        if not died:
+            self.deaths: int = 0
+        self.kills: int = 0
+        self.shots_fired: int = 0
+        self.shots_hit: int = 0
+
+        # start timer
+        self.start_timer()
         
     def __frame(self) -> None:
         """Operations that should be ran in one frame in the main game loop.
@@ -166,6 +184,22 @@ class Game:
         self.player.weapon.draw()
         self.hud_renderer.draw()
 
+        if self.player.is_dead:
+            s = pg.Surface((WIN_WIDTH, WIN_HEIGHT))
+            s.set_alpha(128)
+            s.fill((255, 0, 0))
+            self.surface.blit(s, (0, 0))
+
+            text = self.hud_renderer.hud_text.string_to_surface("you died", "small", 9)
+            text_x = WIN_HALF_WIDTH - text.get_width() // 2
+            text_y = WIN_HALF_HEIGHT - text.get_height()
+            self.surface.blit(text, (text_x, text_y))
+
+            text2 = self.hud_renderer.hud_text.string_to_surface("press enter or space to restart", "small", 3)
+            text2_x = WIN_HALF_WIDTH - text2.get_width() // 2
+            text2_y = WIN_HALF_HEIGHT + text2.get_height()
+            self.surface.blit(text2, (text2_x, text2_y))
+
     def __events(self) -> None:
         """Poll and handle events."""
 
@@ -180,6 +214,12 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_LCTRL or event.key == pg.K_RCTRL:
                     self.ctrl = True
+                
+                if self.player.is_dead:
+                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
+                        self.play(died=True)
+                elif event.key == pg.K_SPACE:
+                    self.player.use_lever()
             
             if event.type == pg.KEYUP:
                 if event.key == pg.K_LCTRL or event.key == pg.K_RCTRL:
@@ -212,9 +252,9 @@ class Game:
     
     def new_game(self) -> None:
         self.in_menu = False
-        # self.menu = None
-
         self.audio_manager.play_music(self.audio_manager.music_path)
+
+        self.play()
 
     def __tick_delta(self) -> None:
         """
@@ -233,3 +273,21 @@ class Game:
         """
         
         self.running = False
+
+    def open_menu(self, menu: Menu) -> None:
+        self.in_menu = True
+        self.menu = menu
+        self.audio_manager.play_music(menu.music_path)
+
+    def start_timer(self) -> None:
+        self.start_time = datetime.datetime.now()
+        self.finish_time = None
+        self.seconds = None
+
+    def stop_timer(self) -> None:
+        self.finish_time = datetime.datetime.now()
+        self.seconds = (self.finish_time - self.start_time).total_seconds()
+
+    @property
+    def kills_percentage(self) -> float:
+        return self.kills / self.level.total_enemies * 100

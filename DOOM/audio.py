@@ -3,8 +3,11 @@ import pygame as pg
 
 class AudioManager:
     def __init__(self) -> None:
+        pg.mixer.set_reserved(1)
+
         self.music_path: str = "DOOM/resources/audio/music/E1M1.mp3"
         self.title_music_path: str = "DOOM/resources/audio/music/title.mp3"
+        self.level_complete_music_path: str = "DOOM/resources/audio/music/level_complete.mp3"
 
         self.item_pickup: pg.mixer.Sound = self.load_sound("item_pickup.wav")
         self.weapon_pickup: pg.mixer.Sound = self.load_sound("weapon_pickup.wav")
@@ -24,8 +27,10 @@ class AudioManager:
         return pg.mixer.Sound(f"DOOM/resources/audio/{file}")
     
     def play(self, sound: pg.mixer.Sound, volume: float = 1):
+        channel = pg.mixer.find_channel(True)
+        sound.stop()
         sound.set_volume(volume)
-        pg.mixer.Sound.play(sound)
+        channel.play(sound)
     
     def play_music(self, music_path: str) -> None:
         pg.mixer.music.load(music_path)
