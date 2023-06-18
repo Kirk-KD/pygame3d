@@ -23,13 +23,13 @@ skull = pg.transform.scale_by(pg.image.load("./DOOM/resources/textures/menu/skul
 class Button:
     """Class representing a button."""
 
-    def __init__(self, x: int, y: int, text: str):
+    def __init__(self, x: int, y: int, text: str, scale: int = 7):
         self.x = x
         self.y = y
         self.position = x, y
         self.text = text
 
-        self.surface = hud_text.string_to_surface(self.text, "small", 7)  # render the text once for better performance
+        self.surface = hud_text.string_to_surface(self.text, "small", scale)  # render the text once for better performance
         self.width, self.height = self.surface.get_size()  # get the text size
     
     def draw(self, menu, is_selected = False):
@@ -85,9 +85,10 @@ class Text:
 
 
 class MenuPage:
-    def __init__(self, buttons: List[Button], texts: List[Text]):
-        self.buttons = buttons
-        self.texts = texts
+    def __init__(self, buttons: List[Button], texts: List[Text], default_button_idx: int = 0):
+        self.buttons: List[Button] = buttons
+        self.texts: List[Text] = texts
+        self.default_btn_idx: int = default_button_idx
 
 
 class Menu:
@@ -141,5 +142,5 @@ class Menu:
     
     def switch_page(self, new_page: MenuPage):
         self.page = new_page
-        self.selected_btn_idx = 0
-        self.selected_button = self.page.buttons[0] if len(self.page.buttons) else None
+        self.selected_btn_idx = self.page.default_btn_idx
+        self.selected_button = self.page.buttons[self.selected_btn_idx] if len(self.page.buttons) else None

@@ -7,7 +7,6 @@ import random
 import pygame as pg
 from collections import deque
 import math
-from random import randint
 
 from config import *
 from renderer.sprite_object import AnimatedSpriteObject
@@ -24,12 +23,12 @@ class Enemy(AnimatedSpriteObject):
                  scale: float = 1, shift: float = 0) -> None:
         super().__init__(game, base_path + "/idle", anim_time, position, scale, shift)
 
-        self.detection_distance: float = detection_distance
-        self.attack_distance: float = attack_distance
+        self.detection_distance: float = detection_distance * DIFFICULTY_RANGE_SCALING[self.game.difficulty]
+        self.attack_distance: float = attack_distance * DIFFICULTY_RANGE_SCALING[self.game.difficulty]
         self.speed: float = speed
         self.health: int = health
-        self.damage: int = damage
-        self.accuracy: float = accuracy
+        self.damage: int = round(damage * DIFFICULTY_DAMAGE_SCALING[self.game.difficulty])
+        self.accuracy: float = accuracy * DIFFICULTY_ACCURACY_SCALING[self.game.difficulty]
 
         self.alive: bool = True
 
@@ -264,7 +263,7 @@ class Enemy(AnimatedSpriteObject):
 
     def drop_loot(self) -> None:
         loots = ["clip", "shells", "stimpack", "medikit", "armor_green", "armor_blue", None]
-        weights = [0.45, 0.35, 0.1, 0.05, 0.025, 0.025, 1]
+        weights = [0.45, 0.35, 0.1, 0.05, 0.02, 0.01, 1]
         loot_name = random.choices(loots, weights, k=1)[0]
 
         if loot_name is not None:
@@ -296,8 +295,8 @@ class Zombieman(Enemy):
 
     def __init__(self, game: Game, position: Tuple[float, float]):
         super().__init__(game=game,
-                         detection_distance=10,
-                         attack_distance=6,
+                         detection_distance=12,
+                         attack_distance=7,
                          speed=0.03,
                          health=100,
                          damage=10,

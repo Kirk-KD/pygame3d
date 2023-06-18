@@ -1,4 +1,5 @@
 import math
+from typing import List
 
 # 4:3 ratio window
 WIN_WIDTH: int = 1200
@@ -37,3 +38,7 @@ HALF_TEX_SIZE: int = TEX_SIZE // 2
 PICKUP_DISTANCE: float = 0.9
 
 SOUND_MAX_DISTANCE: float = 15
+
+DIFFICULTY_DAMAGE_SCALING: List[float] = [0.7, 0.86, 1, 1.14, 1.45]
+DIFFICULTY_ACCURACY_SCALING: List[float] = [0.88, 0.96, 1, 1.04, 1.2]
+DIFFICULTY_RANGE_SCALING: List[float] = [0.96, 0.98, 1, 1.02, 1.04]

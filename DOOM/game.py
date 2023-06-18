@@ -59,6 +59,7 @@ class Game:
 
         # game options
         self.classic_control: bool = False
+        self.difficulty: int = 2
 
         # initialize when this object is initialized
         self.__pre_init()
@@ -141,7 +142,7 @@ class Game:
 
         # start timer
         self.start_timer()
-        
+
     def __frame(self) -> None:
         """Operations that should be ran in one frame in the main game loop.
 
@@ -151,7 +152,7 @@ class Game:
         """
 
         if self.in_menu:
-            self.running = not self.menu.events()
+            self.running = (not self.menu.events()) and self.running
             if self.running:
                 self.menu.draw()
         else:
@@ -208,7 +209,7 @@ class Game:
             # quit to quit
             if event.type == pg.QUIT:
                 # quit
-                self.__quit()
+                self.quit()
             
             # key
             if event.type == pg.KEYDOWN:
@@ -265,7 +266,7 @@ class Game:
 
         self.deltatime = self.clock.tick(FPS) / 1000
 
-    def __quit(self) -> None:
+    def quit(self) -> None:
         """
         Quits the game.
 
