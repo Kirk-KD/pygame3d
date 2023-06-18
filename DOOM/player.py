@@ -149,6 +149,8 @@ class Player:
             self.health = 0
             # kill the player :D
             self.death()
+        else:
+            self.game.audio_manager.play(self.game.audio_manager.player_hurt)
 
     def heal(self, amount: int) -> None:
         """Heal the player"""
@@ -170,6 +172,8 @@ class Player:
         """Die."""
 
         print("Player died (implement this later)")
+
+        # self.game.audio_manager.play(self.game.audio_manager.player_death)
 
     def movement(self) -> None:
         """Handles the movement."""
@@ -200,9 +204,9 @@ class Player:
         speed_sin = speed * sin_a
         speed_cos = speed * cos_a
 
-        if self.game.classic_control:
-            clear_mouse_rel = True
+        clear_mouse_rel = True
 
+        if self.game.classic_control:
             if keys[pg.K_UP]:
                 num_key_pressed += 1
                 dx += speed_cos

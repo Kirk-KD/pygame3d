@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 import pygame as pg
-from typing import List
+from typing import TYPE_CHECKING, List
+if TYPE_CHECKING:
+    from game import Game
 
 from renderer.hud_renderer import HUDText
 from config import WIN_WIDTH, WIN_HEIGHT
@@ -90,7 +94,7 @@ class Menu:
     """Parent class for the menu."""
 
     def __init__(self, game, background: pg.Surface, page: MenuPage) -> None:
-        self.game = game
+        self.game: Game = game
         self.background: pg.Surface = background
         self.surface: pg.Surface = self.game.surface  # main surface
         self.page: MenuPage = page
@@ -106,20 +110,23 @@ class Menu:
                 return True
 
             if event.type == pg.KEYDOWN:  # key press
-                if event.key == pg.K_KP_ENTER or event.key == pg.K_SPACE:  # click a button
+                if event.key == pg.K_RETURN or event.key == pg.K_SPACE:  # click a button
+                    self.game.audio_manager.play(self.game.audio_manager.pistol)
                     self.selected_button.on_click(self)
                 elif event.key == pg.K_UP:  # loop selections
-                    if len(self.page.buttons):
-                        self.selected_btn_idx -= 1
-                        self.selected_btn_idx %= len(self.page.buttons)
-                        self.selected_button = self.page.buttons[self.selected_btn_idx]
+                    self.next_button(-1)
                 elif event.key == pg.K_DOWN:  # loop selections
-                    if len(self.page.buttons):
-                        self.selected_btn_idx += 1
-                        self.selected_btn_idx %= len(self.page.buttons)
-                        self.selected_button = self.page.buttons[self.selected_btn_idx]
+                    self.next_button(1)
         
         return False
+
+    def next_button(self, dir: int) -> None:
+        if len(self.page.buttons):
+            self.game.audio_manager.play(self.game.audio_manager.pistol)
+
+            self.selected_btn_idx += dir
+            self.selected_btn_idx %= len(self.page.buttons)
+            self.selected_button = self.page.buttons[self.selected_btn_idx]
     
     def draw(self) -> None:
         self.surface.blit(self.background, (0, 0))

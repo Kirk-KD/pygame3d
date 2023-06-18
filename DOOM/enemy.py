@@ -7,6 +7,7 @@ import random
 import pygame as pg
 from collections import deque
 import math
+from random import randint
 
 from config import *
 from renderer.sprite_object import AnimatedSpriteObject
@@ -18,13 +19,15 @@ ENEMIES = ObjectRegistry()
 
 class Enemy(AnimatedSpriteObject):
     def __init__(self, game: Game, detection_distance: float, attack_distance: float, speed: float, health: int, damage: int, accuracy: float,  
-                 base_path: str, attack_frame_index: int, anim_time: float, position: Tuple[float, float], scale: float = 1, shift: float = 0) -> None:
+                 base_path: str, attack_frame_index: int, anim_time: float, position: Tuple[float, float],
+                 attack_sound: pg.mixer.Sound, idle_sound: pg.mixer.Sound, death_sound: pg.mixer.Sound, hurt_sound: pg.mixer.Sound,
+                 scale: float = 1, shift: float = 0) -> None:
         super().__init__(game, base_path + "/idle", anim_time, position, scale, shift)
 
         self.detection_distance: float = detection_distance
         self.attack_distance: float = attack_distance
         self.speed: float = speed
-        self.healh: int = health
+        self.health: int = health
         self.damage: int = damage
         self.accuracy: float = accuracy
 
@@ -42,6 +45,11 @@ class Enemy(AnimatedSpriteObject):
         self.attack_anim: deque = self.get_images("DOOM/resources/textures/sprites/" + base_path + "/attack")
         self.pain_anim: deque = self.get_images("DOOM/resources/textures/sprites/" + base_path + "/pain")
         self.death_anim: deque = self.get_images("DOOM/resources/textures/sprites/" + base_path + "/death")
+
+        self.attack_sound: pg.mixer.Sound = attack_sound
+        self.idle_sound: pg.mixer.Sound = idle_sound
+        self.death_sound: pg.mixer.Sound = death_sound
+        self.hurt_sound: pg.mixer.Sound = hurt_sound
 
         self.attack_frame: pg.Surface = self.attack_anim[attack_frame_index]
 
@@ -85,7 +93,7 @@ class Enemy(AnimatedSpriteObject):
         elif self.walk:
             self.animate_walk()
         else:
-            self.animate(self.idle_anim)
+            self.animate_idle()
 
     def check_collision(self, dx: float, dy: float) -> None:
         scale = ENEMY_SIZE_SCALE / self.game.deltatime
@@ -108,9 +116,13 @@ class Enemy(AnimatedSpriteObject):
         dx = math.cos(angle) * self.speed
         dy = math.sin(angle) * self.speed
         self.check_collision(dx, dy)
-        # self.x += dx
-        # self.y += dy
     
+    def animate_idle(self) -> None:
+        self.animate(self.idle_anim)
+        if self.anim_trigger:
+            if random.random() <= 0.2:
+                self.play_sound(self.idle_sound)
+
     def animate_pain(self) -> None:
         self.animate(self.pain_anim)
         if self.anim_trigger:
@@ -121,6 +133,8 @@ class Enemy(AnimatedSpriteObject):
         if self.anim_trigger:
             self.attack = False
             if self.image == self.attack_frame:
+                self.play_sound(self.attack_sound)
+
                 if random.random() <= self.accuracy:
                     self.game.player.take_damage(self.damage)
     
@@ -147,12 +161,17 @@ class Enemy(AnimatedSpriteObject):
                 self.game.player.weapon_shot = False
                 self.pain = True
 
-                self.healh -= self.game.player.weapon.damage
+                self.health -= self.game.player.weapon.damage
+
+                if self.health > 0:
+                    self.play_sound(self.hurt_sound)
     
     def check_death(self) -> None:
-        if self.healh <= 0:
+        if self.health <= 0:
             self.alive = False
             self.death = True
+
+            self.game.audio_manager.play(self.death_sound)
 
             self.drop_loot()
     
@@ -244,6 +263,25 @@ class Enemy(AnimatedSpriteObject):
         if loot_name is not None:
             self.game.objects_manager.add_pickup(PICKUPS.get(loot_name)(self.game, self.position))
 
+    def calculate_volume(self) -> float:
+        distance = math.dist(self.game.player.position, self.position)
+        if distance > SOUND_MAX_DISTANCE:
+            return 0
+        
+        volume = 1 - distance / SOUND_MAX_DISTANCE
+
+        px, py = self.game.player.position
+        dx = self.x - px
+        dy = self.y - py
+        angle_player_to_enemy = math.atan2(dy, dx)
+        angle_difference = abs((angle_player_to_enemy - self.game.player.angle + math.pi) % (2 * math.pi) - math.pi)
+
+        volume *= (math.pi - angle_difference / 2) / math.pi
+        return volume
+
+    def play_sound(self, sound: pg.mixer.Sound) -> None:
+        self.game.audio_manager.play(sound, self.calculate_volume())
+
 
 @ENEMIES.register
 class Zombieman(Enemy):
@@ -262,4 +300,8 @@ class Zombieman(Enemy):
                          anim_time=200,
                          position=position,
                          scale=0.7,
-                         shift=0.25)
+                         shift=0.25,
+                         attack_sound=game.audio_manager.enemy_attack,
+                         idle_sound=game.audio_manager.enemy_idle,
+                         death_sound=game.audio_manager.enemy_death,
+                         hurt_sound=game.audio_manager.enemy_hurt)
