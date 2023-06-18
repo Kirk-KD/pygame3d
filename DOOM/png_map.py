@@ -40,6 +40,7 @@ class PNGMap:
 
     def to_map(self) -> None:
         map = []
+        
         for y in range(self.image.height):
             row = []
             for x in range(self.image.width):
@@ -50,7 +51,7 @@ class PNGMap:
                 else:
                     row.append(RGB_TO_TEX[rgb])
             map.append(row)
-        # print("\n".join(["".join(row) for row in map]))
+
         return map
     
     def get(self, x: int, y: int) -> Tuple[int, int, int]:

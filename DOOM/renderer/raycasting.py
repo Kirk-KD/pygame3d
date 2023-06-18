@@ -31,7 +31,7 @@ class Raycasting:
             else:
                 tex_h = TEX_SIZE * WIN_HEIGHT / proj_h
                 wall_col = self.textures[tex].texture.subsurface(offset * (TEX_SIZE - SCALE), HALF_TEX_SIZE - tex_h // 2,
-                                                                 SCALE, tex_h)
+                                                                    SCALE, tex_h)
                 wall_col = pg.transform.scale(wall_col, (SCALE, WIN_HEIGHT))
                 wall_pos = (ray * SCALE, 0)
 
@@ -98,9 +98,6 @@ class Raycasting:
             proj_height = SCREEN_DISTANCE / (depth + 0.0001)
 
             self.raycast_result.append((depth, proj_height, str(texture), offset))
-
-            # color = [255 / (1 + depth ** 7 * 0.00002)] * 3
-            # pg.draw.rect(self.surf, color, (ray * SCALE, WIN_HALF_HEIGHT - proj_height // 2, SCALE, proj_height))
 
             ray_angle += DELTA_ANGLE
     

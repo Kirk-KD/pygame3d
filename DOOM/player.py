@@ -150,6 +150,7 @@ class Player:
             # kill the player :D
             self.death()
         else:
+            self.game.audio_manager.player_hurt.stop()
             self.game.audio_manager.play(self.game.audio_manager.player_hurt)
 
     def heal(self, amount: int) -> None:

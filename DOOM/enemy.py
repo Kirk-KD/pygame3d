@@ -62,6 +62,9 @@ class Enemy(AnimatedSpriteObject):
             self.animate_death()
             return
         
+        if self.game.player.health <= 0:
+            return
+
         self.can_see_player = self.raycast_to_player()
 
         in_detection = self.player_in_detection_distance()
@@ -276,7 +279,7 @@ class Enemy(AnimatedSpriteObject):
         angle_player_to_enemy = math.atan2(dy, dx)
         angle_difference = abs((angle_player_to_enemy - self.game.player.angle + math.pi) % (2 * math.pi) - math.pi)
 
-        volume *= (math.pi - angle_difference / 2) / math.pi
+        volume *= (math.pi - angle_difference / 1.5) / math.pi
         return volume
 
     def play_sound(self, sound: pg.mixer.Sound) -> None:
