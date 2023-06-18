@@ -6,6 +6,9 @@ class AudioManager:
         self.music_path: str = "DOOM/resources/audio/music/E1M1.mp3"
         self.title_music_path: str = "DOOM/resources/audio/music/title.mp3"
 
+        self.item_pickup: pg.mixer.Sound = self.load_sound("item_pickup.wav")
+        self.weapon_pickup: pg.mixer.Sound = self.load_sound("weapon_pickup.wav")
+
         self.pistol: pg.mixer.Sound = self.load_sound("pistol.wav")
         self.shotgun: pg.mixer.Sound = self.load_sound("shotgun.wav")
 

@@ -76,7 +76,7 @@ class Enemy(AnimatedSpriteObject):
                     self.movement()
             else:
                 if self.can_see_player:
-                    self.target_position = self.game.player.grid_position
+                    self.target_position = self.game.player.position
                     self.movement()
                 else:
                     self.pathfind()
