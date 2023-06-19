@@ -32,7 +32,6 @@ class AudioManager:
         channel.play(sound)
     
     def play_music(self, music_path: str) -> None:
-        print(music_path)
         pg.mixer.music.load(music_path)
         pg.mixer.music.play(-1)
     

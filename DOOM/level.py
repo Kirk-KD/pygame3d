@@ -67,7 +67,6 @@ class Level:
         self.sprite_objects: list[SpriteObject] = []
 
         self.music_path: str = f"DOOM/resources/audio/music/{self.path.split('/')[-1]}.mp3"
-        print(self.music_path)
 
         self.total_enemies: int
 
