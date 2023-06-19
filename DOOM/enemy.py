@@ -55,6 +55,7 @@ class Enemy(AnimatedSpriteObject):
         self.frame_counter: int = 0
 
         self.target_position: Tuple = None
+        self.aggravated: bool = False
     
     def logics(self) -> None:
         if not self.alive:
@@ -66,7 +67,7 @@ class Enemy(AnimatedSpriteObject):
 
         self.can_see_player = self.raycast_to_player()
 
-        in_detection = self.player_in_detection_distance()
+        in_detection = self.player_in_detection_distance() or self.aggravated
         in_attack = self.player_in_attack_distance()
 
         if in_detection:
@@ -163,7 +164,9 @@ class Enemy(AnimatedSpriteObject):
                 self.game.player.weapon_shot = False
                 self.pain = True
 
-                self.health -= self.game.player.weapon.damage
+                distance = math.dist(self.position, self.game.player.position)
+                self.health -= self.game.player.weapon.get_damage(distance)
+                self.aggravated = True
 
                 self.game.shots_hit += 1
 

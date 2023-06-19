@@ -11,7 +11,7 @@ from config import *
 
 
 class Weapon(AnimatedSpriteObject):
-    def __init__(self, game: Game, damage: int, max_ammo: int, init_ammo: int, sprite_sheet_dir: str, frame_time: float, scale: float, sound: pg.mixer.Sound) -> None:
+    def __init__(self, game: Game, damage: int, max_ammo: int, init_ammo: int, max_range: float, sprite_sheet_dir: str, frame_time: float, scale: float, sound: pg.mixer.Sound) -> None:
         super().__init__(game, sprite_sheet_dir, animation_time=frame_time, scale=scale)
         self.images = deque([pg.transform.scale(img, (img.get_width() * self.sprite_scale, img.get_height() * self.sprite_scale))
                              for img in self.images])
@@ -20,11 +20,16 @@ class Weapon(AnimatedSpriteObject):
         self.reloading: bool = False
         self.damage: int = damage
         self.max_ammo: int = max_ammo
+        self.max_range: float = max_range
         self.ammo: int = init_ammo
         self.num_images: int = len(self.images)
         self.frame_counter: int = 0
 
         self.sound: pg.mixer.Sound = sound
+    
+    def get_damage(self, distance: float):
+        mult = max((self.max_range - distance + 0.2) / self.max_range, 0.4)
+        return self.damage * mult
     
     def animate_shot(self) -> None:
         if self.reloading:
@@ -61,9 +66,10 @@ class Weapon(AnimatedSpriteObject):
 class Pistol(Weapon):
     def __init__(self, game: Game) -> None:
         super().__init__(game,
-                         damage=35,
+                         damage=55,
                          max_ammo=200,
                          init_ammo=50,
+                         max_range=30,
                          sprite_sheet_dir="weapons/pistol",
                          frame_time=90,
                          scale=3,
@@ -73,9 +79,10 @@ class Pistol(Weapon):
 class Shotgun(Weapon):
     def __init__(self, game: Game) -> None:
         super().__init__(game,
-                         damage=50,
+                         damage=120,
                          max_ammo=50,
                          init_ammo=8,
+                         max_range=8,
                          sprite_sheet_dir="weapons/shotgun",
                          frame_time=100,
                          scale=3,
