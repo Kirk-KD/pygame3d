@@ -5,7 +5,6 @@ class AudioManager:
     def __init__(self) -> None:
         pg.mixer.set_reserved(1)
 
-        self.music_path: str = "DOOM/resources/audio/music/E1M1.mp3"
         self.title_music_path: str = "DOOM/resources/audio/music/title.mp3"
         self.level_complete_music_path: str = "DOOM/resources/audio/music/level_complete.mp3"
 
@@ -33,6 +32,7 @@ class AudioManager:
         channel.play(sound)
     
     def play_music(self, music_path: str) -> None:
+        print(music_path)
         pg.mixer.music.load(music_path)
         pg.mixer.music.play(-1)
     

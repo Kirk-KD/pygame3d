@@ -128,7 +128,7 @@ class Game:
         self.objects_manager: ObjectsManager = ObjectsManager(self)
 
         # load level
-        self.level: Level = Level("DOOM/resources/map_data/e1m1", self)
+        self.level: Level = Level("DOOM/resources/map_data/e1m2", self)
 
         # create the raycast engine
         self.raycast: Raycasting = Raycasting(self)
@@ -253,9 +253,8 @@ class Game:
     
     def new_game(self) -> None:
         self.in_menu = False
-        self.audio_manager.play_music(self.audio_manager.music_path)
-
         self.play()
+        self.audio_manager.play_music(self.level.music_path)
 
     def __tick_delta(self) -> None:
         """

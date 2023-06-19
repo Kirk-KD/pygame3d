@@ -30,7 +30,21 @@ RGB_TO_TEX = {
     (0, 0, 15): "MARBFAC2",
     (0, 0, 16): "MARBFAC3",
 
-    (0, 0, 17): "SW1STARG"
+    (0, 0, 17): "SW1STARG",
+
+    (0, 0, 18): "STONE2",
+    (0, 0, 19): "STONE3",
+    (0, 0, 20): "STONGARG",
+
+    (0, 0, 21): "MARBLE3",
+
+    (0, 0, 22): "SP_DUDE1",
+    (0, 0, 23): "SP_DUDE2",
+    (0, 0, 24): "MARBFAC2",
+    (0, 0, 25): "MARBFAC3",
+    (0, 0, 26): "SKULWAL3",
+    (0, 0, 27): "MARBFACE",
+    (0, 0, 28): "MARBLOD1"
 }
 
 

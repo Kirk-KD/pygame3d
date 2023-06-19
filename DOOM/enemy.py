@@ -175,7 +175,7 @@ class Enemy(AnimatedSpriteObject):
             self.alive = False
             self.death = True
 
-            self.game.audio_manager.play(self.death_sound)
+            self.play_sound(self.death_sound)
 
             self.drop_loot()
 
