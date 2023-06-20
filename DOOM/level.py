@@ -58,7 +58,8 @@ class Level:
             game (Game): The game object.
         """
 
-        self.path: str = path
+        self.lvl_name: str = path
+        self.path: str = "DOOM/resources/map_data/" + path
         self.game: Game = game
         self.objects_manager = game.objects_manager
 
@@ -66,7 +67,7 @@ class Level:
         self.map: Map = Map()
         self.sprite_objects: list[SpriteObject] = []
 
-        self.music_path: str = f"DOOM/resources/audio/music/{self.path.split('/')[-1]}.mp3"
+        self.music_path: str = f"DOOM/resources/audio/music/{self.lvl_name}.mp3"
 
         self.total_enemies: int
 

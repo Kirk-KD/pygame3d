@@ -19,7 +19,7 @@ class NextLevel(Button):
         super().__init__(None, 250, "next level")
     
     def on_click(self, menu: Menu):
-        menu.game.new_game()
+        menu.game.new_game(str(int(menu.game.level.lvl_name) + 1))
 
 
 class RestartLevel(Button):
@@ -59,8 +59,8 @@ class LevelCompleteMenu(Menu):
             ]
         )
         self.options_page = MenuPage(
+            ([NextLevel()] if game.level.lvl_name == "1" else []) +
             [
-                NextLevel(),
                 RestartLevel(),
                 MainMenu(),
                 Quit()

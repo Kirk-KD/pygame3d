@@ -113,7 +113,7 @@ class Game:
         # load the menu
         self.open_menu(MainMenu(self))
 
-    def play(self, died: bool = False) -> None:
+    def play(self, level: str, died: bool = False) -> None:
         # create the HUD renderer
         self.hud_renderer: HUDRenderer = HUDRenderer(self)
 
@@ -128,7 +128,7 @@ class Game:
         self.objects_manager: ObjectsManager = ObjectsManager(self)
 
         # load level
-        self.level: Level = Level("DOOM/resources/map_data/e1m2", self)
+        self.level: Level = Level(level, self)
 
         # create the raycast engine
         self.raycast: Raycasting = Raycasting(self)
@@ -218,7 +218,7 @@ class Game:
                 
                 if self.player.is_dead:
                     if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
-                        self.play(died=True)
+                        self.play(self.level.lvl_name, died=True)
                 elif event.key == pg.K_SPACE:
                     self.player.use_lever()
             
@@ -251,9 +251,9 @@ class Game:
         while self.running:
             self.__frame()
     
-    def new_game(self) -> None:
+    def new_game(self, level: str = "1") -> None:
         self.in_menu = False
-        self.play()
+        self.play(level)
         self.audio_manager.play_music(self.level.music_path)
 
     def __tick_delta(self) -> None:
