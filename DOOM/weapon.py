@@ -28,7 +28,7 @@ class Weapon(AnimatedSpriteObject):
         self.sound: pg.mixer.Sound = sound
     
     def get_damage(self, distance: float):
-        mult = max((self.max_range - distance + 0.2) / self.max_range, 0.4)
+        mult = max((self.max_range - distance + 0.3) / self.max_range, 0.4)
         return self.damage * mult
     
     def animate_shot(self) -> None:

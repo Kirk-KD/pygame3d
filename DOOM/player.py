@@ -207,9 +207,9 @@ class Player:
 
         # sprint
         if keys[pg.K_LSHIFT] or keys[pg.K_RSHIFT]:
-            speed *= 1.65
-            classic_mouse_speed *= 1.65
-            rel *= 1.65
+            speed *= 1.85
+            classic_mouse_speed *= 1.85
+            rel *= 1.85
 
         # calculate the player position in the next frame with trigonometry
         speed_sin = speed * sin_a
