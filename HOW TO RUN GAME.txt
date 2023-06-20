@@ -1,0 +1,1 @@
+Install Python 3.11 from https://www.python.org/downloads/, then run runner.py by double clicking or from command line.
